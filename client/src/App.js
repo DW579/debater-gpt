@@ -1,6 +1,9 @@
 import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 function App() {
     const [data, setData] = React.useState(null);
@@ -12,12 +15,13 @@ function App() {
     }, []);
 
     return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>{!data ? "Loading..." : data}</p>
-            </header>
-        </div>
+        <Container fluid>
+            <Row>
+                <Col>
+                    <h1>Hello from React</h1>
+                </Col>
+            </Row>
+        </Container>
     );
 }
 
