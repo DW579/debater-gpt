@@ -1,53 +1,38 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
+// Pages
 import Home from "./pages/home";
 import About from "./pages/about";
 import Debate from "./pages/debate";
 
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
+// Components
+import Header from "./components/header";
+
+// import Container from "react-bootstrap/Container";
+// import Row from "react-bootstrap/Row";
+// import Col from "react-bootstrap/Col";
+
 
 function App() {
-    const [data, setData] = React.useState(null);
+    // const [data, setData] = React.useState(null);
 
-    React.useEffect(() => {
-        fetch("/api")
-            .then((res) => res.json())
-            .then((data) => setData(data.message));
-    }, []);
+    // React.useEffect(() => {
+    //     fetch("/api")
+    //         .then((res) => res.json())
+    //         .then((data) => setData(data.message));
+    // }, []);
 
     return (
-        <Container fluid>
-            <Row>
-                <Col>
-                    <Navbar bg="primary" variant="dark">
-                        <Navbar.Brand href="/">Debater-GPT</Navbar.Brand>
-                        <Nav className="mr-auto">
-                            <Nav.Link href="/">Home</Nav.Link>
-                            <Nav.Link href="/debate">Debate</Nav.Link>
-                            <Nav.Link href="/about">About</Nav.Link>
-                        </Nav>
-                    </Navbar>
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <Router>
-                        <Routes>
-                            <Route exact path="/" element={<Home />} />
-                            <Route path="/debate" element={<Debate />} />
-                            <Route path="/about" element={<About />} />
-                        </Routes>
-                    </Router>
-                </Col>
-            </Row>
-        </Container>
+        <Router>
+            <Header />
+            <Routes>
+                <Route exact path="/" element={<Home />} />
+                <Route path="/debate" element={<Debate />} />
+                <Route path="/about" element={<About />} />
+            </Routes>
+        </Router>
     );
 }
 
