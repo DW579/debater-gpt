@@ -3,9 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Home from "./components/home";
-import About from "./components/about";
-import Debate from "./components/debate";
+import Home from "./pages/home";
+import About from "./pages/about";
+import Debate from "./pages/debate";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
