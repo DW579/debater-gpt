@@ -1,6 +1,10 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+// Bootstrap components
+import Container from "react-bootstrap/Container";
 
 // Pages
 import Home from "./pages/home";
@@ -9,11 +13,6 @@ import Debate from "./pages/debate";
 
 // Components
 import Header from "./components/header";
-
-// import Container from "react-bootstrap/Container";
-// import Row from "react-bootstrap/Row";
-// import Col from "react-bootstrap/Col";
-
 
 function App() {
     // const [data, setData] = React.useState(null);
@@ -25,14 +24,16 @@ function App() {
     // }, []);
 
     return (
-        <Router>
-            <Header />
-            <Routes>
-                <Route exact path="/" element={<Home />} />
-                <Route path="/debate" element={<Debate />} />
-                <Route path="/about" element={<About />} />
-            </Routes>
-        </Router>
+        <Container fluid className="custom-container">
+            <Router>
+                <Header />
+                <Routes>
+                    <Route exact path="/" element={<Home />} />
+                    <Route path="/debate" element={<Debate />} />
+                    <Route path="/about" element={<About />} />
+                </Routes>
+            </Router>
+        </Container>
     );
 }
 
