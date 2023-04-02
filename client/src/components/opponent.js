@@ -11,7 +11,7 @@ import OpenaiLogo from "../images/openai_logo.png";
 import UserImage from "../images/user.jpg";
 
 export default function Opponent(props) {
-    const [opponent, setOpponent] = React.useState(null);
+    const [opponent, setOpponent] = React.useState("");
     const [opponentImage, setOpponentImage] = React.useState(QuestionMark);
 
     const image_style = {
@@ -19,23 +19,32 @@ export default function Opponent(props) {
         height: "150px",
     };
 
-    // Function to handle opponent selection from dropdown menu (see line 35)
+    // Function to handle opponent selection from dropdown menu
     const handleSelect = (eventKey) => {
-        // Set opponent based on eventKey value (1 or 2) and update state with setOpponent function (see line 10)
+        let opponent = "";
+
+        // Set opponent based on eventKey value (1 or 2) and update state with setOpponent function
         if (eventKey === "1") {
             setOpponent("Chat-GPT 3");
             setOpponentImage(OpenaiLogo);
+
+            opponent = "Chat-GPT 3";
         } else if (eventKey === "2") {
             setOpponent("Human");
             setOpponentImage(UserImage);
+
+            opponent = "Human";
         }
+
+        // Call the onData function passed in as a prop from Debate.js
+        props.onData(opponent);
     };
 
     return (
         <Row>
             <Col>
                 <h3>{props.name}</h3>
-                <img src={opponentImage} style={image_style} />
+                <img src={opponentImage} style={image_style} alt="Opponent" />
                 <Dropdown onSelect={handleSelect}>
                     <Dropdown.Toggle variant="success" id="dropdown-basic">
                         {opponent ? opponent : "Select Opponent"}
