@@ -7,6 +7,7 @@ import Col from "react-bootstrap/Col";
 // Components
 import Headline from "../components/headline";
 import Opponent from "../components/opponent";
+import Topic from "../components/topic";
 import Button from "react-bootstrap/esm/Button";
 
 export default function Debate() {
@@ -17,6 +18,8 @@ export default function Debate() {
 
     // State variable for disabled button
     const [disabled, setDisabled] = React.useState(true);
+
+    const [showTopic, setShowTopic] = React.useState(false);
 
     // useEffect hook to check if both opponents have been selected and update disabled state accordingly
     useEffect(() => {
@@ -36,7 +39,8 @@ export default function Debate() {
 
     // Function to handle topic button click
     const handleChooseTopicClick = () => {
-        setOpponentDropdown(true)
+        setOpponentDropdown(true);
+        setShowTopic(true);
     };
 
     return (
@@ -59,13 +63,22 @@ export default function Debate() {
                         />
                     </Col>
                 </Row>
-                <Row>
-                    <Col>
-                        <Button variant="success" size="lg" disabled={disabled} onClick={handleChooseTopicClick}>
-                            Choose Topic
-                        </Button>
-                    </Col>
-                </Row>
+                {showTopic ? (
+                    <Topic />
+                ) : (
+                    <Row>
+                        <Col>
+                            <Button
+                                variant="success"
+                                size="lg"
+                                disabled={disabled}
+                                onClick={handleChooseTopicClick}
+                            >
+                                Choose Topic
+                            </Button>
+                        </Col>
+                    </Row>
+                )}
             </Col>
         </Row>
     );

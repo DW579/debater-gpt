@@ -47,7 +47,11 @@ export default function Opponent(props) {
                 <h3>{props.name}</h3>
                 <img src={opponentImage} style={image_style} alt="Opponent" />
                 <Dropdown onSelect={handleSelect}>
-                    <Dropdown.Toggle variant="success" id="dropdown-basic" disabled={props.dropdown}>
+                    <Dropdown.Toggle
+                        variant="success"
+                        id="dropdown-basic"
+                        disabled={props.dropdown}
+                    >
                         {opponent ? opponent : "Select Opponent"}
                     </Dropdown.Toggle>
 
