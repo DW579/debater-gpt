@@ -3,6 +3,7 @@ import React from "react";
 // Bootstrap components
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Dropdown from "react-bootstrap/Dropdown";
 
 // Components
 import Headline from "../components/headline";
@@ -16,13 +17,13 @@ export default function Debate() {
                 <Row>
                     <Col>
                         <Opponent
-                            name="Opponent 1"
+                            name="Positive"
                             image="https://via.placeholder.com/150"
                         />
                     </Col>
                     <Col>
                         <Opponent
-                            name="Opponent 2"
+                            name="Negative"
                             image="https://via.placeholder.com/150"
                         />
                     </Col>
