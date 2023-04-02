@@ -11,6 +11,7 @@ import OpenaiLogo from "../images/openai_logo.png";
 import UserImage from "../images/user.jpg";
 
 export default function Opponent(props) {
+    // State variables for opponent and opponent image
     const [opponent, setOpponent] = React.useState("");
     const [opponentImage, setOpponentImage] = React.useState(QuestionMark);
 
@@ -46,7 +47,7 @@ export default function Opponent(props) {
                 <h3>{props.name}</h3>
                 <img src={opponentImage} style={image_style} alt="Opponent" />
                 <Dropdown onSelect={handleSelect}>
-                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                    <Dropdown.Toggle variant="success" id="dropdown-basic" disabled={props.dropdown}>
                         {opponent ? opponent : "Select Opponent"}
                     </Dropdown.Toggle>
 

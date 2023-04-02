@@ -10,9 +10,10 @@ import Opponent from "../components/opponent";
 import Button from "react-bootstrap/esm/Button";
 
 export default function Debate() {
-    // State variables for positive and negative opponents
+    // State variables for positive and negative opponents and dropdown state variables for each opponent (true or false)
     const [positive, setPositive] = React.useState("");
     const [negative, setNegative] = React.useState("");
+    const [opponentDropdown, setOpponentDropdown] = React.useState(false);
 
     // State variable for disabled button
     const [disabled, setDisabled] = React.useState(true);
@@ -26,14 +27,16 @@ export default function Debate() {
 
     // Functions to handle positive and negative opponent selection
     const handlePositiveSelect = (data) => {
-        console.log("Positive: ", data);
         setPositive(data);
     };
 
-    // Functions to handle positive and negative opponent selection
     const handleNegativeSelect = (data) => {
-        console.log("Negative: ", data);
         setNegative(data);
+    };
+
+    // Function to handle topic button click
+    const handleChooseTopicClick = () => {
+        setOpponentDropdown(true)
     };
 
     return (
@@ -45,18 +48,20 @@ export default function Debate() {
                         <Opponent
                             name="Positive"
                             onData={handlePositiveSelect}
+                            dropdown={opponentDropdown}
                         />
                     </Col>
                     <Col>
                         <Opponent
                             name="Negative"
                             onData={handleNegativeSelect}
+                            dropdown={opponentDropdown}
                         />
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                        <Button variant="success" size="lg" disabled={disabled}>
+                        <Button variant="success" size="lg" disabled={disabled} onClick={handleChooseTopicClick}>
                             Choose Topic
                         </Button>
                     </Col>
