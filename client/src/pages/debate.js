@@ -32,6 +32,8 @@ export default function Debate() {
     // State variable for disabling opponent button
     const [disableOpponentButton, setDisableOpponentButton] = React.useState(true);
 
+    const [disableTopicButton, setDisableTopicButton] = React.useState(true);
+
     // State variables for modals
     const [showOpponentModal, setShowOpponentModal] = React.useState(true);
     const [showTopicModal, setShowTopicModal] = React.useState(false);
@@ -77,6 +79,13 @@ export default function Debate() {
 
     const handleTopicChange = (event) => {
         setTopic(event.target.value);
+
+        if (event.target.value !== "") {
+            setDisableTopicButton(false);
+        } 
+        else {
+            setDisableTopicButton(true);
+        }
     };
 
     return (
@@ -160,7 +169,7 @@ export default function Debate() {
                         </ul>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="primary" onClick={handleTopicNext}>
+                        <Button variant="primary" disabled={disableTopicButton} onClick={handleTopicNext}>
                             Begin Debate
                         </Button>
                     </Modal.Footer>
