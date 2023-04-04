@@ -8,7 +8,9 @@ import Modal from "react-bootstrap/Modal";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Button from "react-bootstrap/esm/Button";
-import Image from 'react-bootstrap/Image'
+import Image from "react-bootstrap/Image";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
 
 // Components
 import Headline from "../components/headline";
@@ -28,6 +30,32 @@ export default function Debate() {
         React.useState("Select Opponent");
     const [positiveImage, setPositiveImage] = React.useState(QuestionMark);
     const [negativeImage, setNegativeImage] = React.useState(QuestionMark);
+
+    const [positiveArguments, setPositiveArguments] = React.useState([
+        {
+            argument:
+                "Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
+            debate_technique: "Utilitarianism",
+            debate_technique_explanation:
+                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
+        },
+        {
+            argument:
+                "Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
+            debate_technique: "Utilitarianism",
+            debate_technique_explanation:
+                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
+        },
+    ]);
+    const [negativeArguments, setNegativeArguments] = React.useState([
+        {
+            argument:
+                "Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
+            debate_technique: "Utilitarianism",
+            debate_technique_explanation:
+                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
+        },
+    ]);
 
     // State variables for topic
     const [topic, setTopic] = React.useState("");
@@ -50,6 +78,8 @@ export default function Debate() {
         ) {
             setDisableOpponentButton(false);
         }
+
+        window.scrollTo(0, document.body.scrollHeight);
     }, [positiveOpponent, negativeOpponent]);
 
     const handlePositiveSelect = (data) => {
@@ -186,13 +216,63 @@ export default function Debate() {
                 <Row>
                     <Col className="text-center">
                         <Opponent name="Positive" image={positiveImage} />
+                        {positiveArguments.map((argument, index) => (
+                            <OverlayTrigger
+                                trigger="click"
+                                key={index}
+                                placement="left"
+                                overlay={
+                                    <Popover id={index}>
+                                        <Popover.Header as="h3">
+                                            {argument.debate_technique}
+                                        </Popover.Header>
+                                        <Popover.Body>
+                                            {
+                                                argument.debate_technique_explanation
+                                            }
+                                        </Popover.Body>
+                                    </Popover>
+                                }
+                            >
+                                <Button variant="secondary">
+                                    {argument.argument}
+                                </Button>
+                            </OverlayTrigger>
+                        ))}
                         <Image src={Typing} alt="Typing" />
-                        <FormControl type="text" placeholder="Enter argument" onChange={handleTopicChange} />
+                        <FormControl
+                            type="text"
+                            placeholder="Enter argument"
+                            onChange={handleTopicChange}
+                        />
                     </Col>
                     <Col className="text-center">
                         <Opponent name="Negative" image={negativeImage} />
+                        {negativeArguments.map((argument, index) => (
+                            <OverlayTrigger
+                                trigger="click"
+                                key={index}
+                                placement="right"
+                                overlay={
+                                    <Popover id={index}>
+                                        <Popover.Header as="h3">{argument.debate_technique}</Popover.Header>
+                                        <Popover.Body>
+                                            {argument.debate_technique_explanation}
+                                        </Popover.Body>
+                                    </Popover>
+                                }
+                            >
+                                <Button variant="secondary">
+                                    {argument.argument}
+                                </Button>
+                            </OverlayTrigger>
+                        ))}
                         <Image src={Typing} alt="Typing" />
-                        <FormControl type="text" placeholder="Enter argument" onChange={handleTopicChange} />
+                        <FormControl
+                            type="text"
+                            placeholder="Enter argument"
+                            onChange={handleTopicChange}
+                        />
                     </Col>
                 </Row>
             </Col>
