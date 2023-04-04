@@ -212,7 +212,6 @@ export default function Debate() {
 
                 <Headline name="Debate!" />
                 <h3>Topic: {topic}</h3>
-
                 <Row>
                     <Col className="text-center">
                         <Opponent name="Positive" image={positiveImage} />
@@ -255,9 +254,13 @@ export default function Debate() {
                                 placement="right"
                                 overlay={
                                     <Popover id={index}>
-                                        <Popover.Header as="h3">{argument.debate_technique}</Popover.Header>
+                                        <Popover.Header as="h3">
+                                            {argument.debate_technique}
+                                        </Popover.Header>
                                         <Popover.Body>
-                                            {argument.debate_technique_explanation}
+                                            {
+                                                argument.debate_technique_explanation
+                                            }
                                         </Popover.Body>
                                     </Popover>
                                 }
