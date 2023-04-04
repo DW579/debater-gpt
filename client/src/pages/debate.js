@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { FormControl } from 'react-bootstrap';
+import { FormControl } from "react-bootstrap";
 
 // Bootstrap components
 import Row from "react-bootstrap/Row";
@@ -8,7 +8,7 @@ import Modal from "react-bootstrap/Modal";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Button from "react-bootstrap/esm/Button";
-
+import Image from 'react-bootstrap/Image'
 
 // Components
 import Headline from "../components/headline";
@@ -18,11 +18,14 @@ import Opponent from "../components/opponent";
 import QuestionMark from "../images/question_mark.png";
 import OpenaiLogo from "../images/openai_logo.png";
 import UserImage from "../images/user.jpg";
+import Typing from "../images/typing.gif";
 
 export default function Debate() {
     // State variables for opponent and opponent image
-    const [positiveOpponent, setPositiveOpponent] = React.useState("Select Opponent");
-    const [negativeOpponent, setNegativeOpponent] = React.useState("Select Opponent");
+    const [positiveOpponent, setPositiveOpponent] =
+        React.useState("Select Opponent");
+    const [negativeOpponent, setNegativeOpponent] =
+        React.useState("Select Opponent");
     const [positiveImage, setPositiveImage] = React.useState(QuestionMark);
     const [negativeImage, setNegativeImage] = React.useState(QuestionMark);
 
@@ -30,7 +33,8 @@ export default function Debate() {
     const [topic, setTopic] = React.useState("");
 
     // State variable for disabling opponent button
-    const [disableOpponentButton, setDisableOpponentButton] = React.useState(true);
+    const [disableOpponentButton, setDisableOpponentButton] =
+        React.useState(true);
 
     const [disableTopicButton, setDisableTopicButton] = React.useState(true);
 
@@ -82,8 +86,7 @@ export default function Debate() {
 
         if (event.target.value !== "") {
             setDisableTopicButton(false);
-        } 
-        else {
+        } else {
             setDisableTopicButton(true);
         }
     };
@@ -91,8 +94,6 @@ export default function Debate() {
     return (
         <Row className="justify-content-center">
             <Col xs={12} md={6} className="text-center">
-                <Headline name="Debate!" />
-
                 <Modal show={showOpponentModal}>
                     <Modal.Header>
                         <Modal.Title>Choose your Opponenets</Modal.Title>
@@ -169,11 +170,31 @@ export default function Debate() {
                         </ul>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="primary" disabled={disableTopicButton} onClick={handleTopicNext}>
+                        <Button
+                            variant="primary"
+                            disabled={disableTopicButton}
+                            onClick={handleTopicNext}
+                        >
                             Begin Debate
                         </Button>
                     </Modal.Footer>
                 </Modal>
+
+                <Headline name="Debate!" />
+                <h3>Topic: {topic}</h3>
+
+                <Row>
+                    <Col className="text-center">
+                        <Opponent name="Positive" image={positiveImage} />
+                        <Image src={Typing} alt="Typing" />
+                        <FormControl type="text" placeholder="Enter argument" onChange={handleTopicChange} />
+                    </Col>
+                    <Col className="text-center">
+                        <Opponent name="Negative" image={negativeImage} />
+                        <Image src={Typing} alt="Typing" />
+                        <FormControl type="text" placeholder="Enter argument" onChange={handleTopicChange} />
+                    </Col>
+                </Row>
             </Col>
         </Row>
     );
