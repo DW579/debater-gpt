@@ -109,11 +109,6 @@ export default function Debate() {
         setShowTopicModal(true);
     };
 
-    const handleTopicNext = () => {
-        setShowTopicModal(false);
-        setShowDebate(true);
-    };
-
     const handleTopicChange = (event) => {
         setTopic(event.target.value);
 
@@ -122,6 +117,13 @@ export default function Debate() {
         } else {
             setDisableTopicButton(true);
         }
+    };
+
+    const handleTopicNext = () => {
+        setShowTopicModal(false);
+        setShowDebate(true);
+
+        
     };
 
     return (
