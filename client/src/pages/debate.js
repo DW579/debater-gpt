@@ -23,6 +23,8 @@ import UserImage from "../images/user.jpg";
 import Typing from "../images/typing.gif";
 
 export default function Debate() {
+    const [showDebate, setShowDebate] = React.useState(false);
+
     // State variables for opponent and opponent image
     const [positiveOpponent, setPositiveOpponent] =
         React.useState("Select Opponent");
@@ -109,6 +111,7 @@ export default function Debate() {
 
     const handleTopicNext = () => {
         setShowTopicModal(false);
+        setShowDebate(true);
     };
 
     const handleTopicChange = (event) => {
@@ -210,74 +213,94 @@ export default function Debate() {
                     </Modal.Footer>
                 </Modal>
 
-                <Headline name="Debate!" />
-                <h3>Topic: {topic}</h3>
-                <Row>
-                    <Col className="text-center">
-                        <Opponent name="Positive" image={positiveImage} />
-                        {positiveArguments.map((argument, index) => (
-                            <OverlayTrigger
-                                trigger="click"
-                                key={index}
-                                placement="left"
-                                overlay={
-                                    <Popover id={index}>
-                                        <Popover.Header as="h3">
-                                            {argument.debate_technique}
-                                        </Popover.Header>
-                                        <Popover.Body>
-                                            {
-                                                argument.debate_technique_explanation
-                                            }
-                                        </Popover.Body>
-                                    </Popover>
-                                }
-                            >
-                                <Button variant="secondary">
-                                    {argument.argument}
-                                </Button>
-                            </OverlayTrigger>
-                        ))}
-                        <Image src={Typing} alt="Typing" />
-                        <FormControl
-                            type="text"
-                            placeholder="Enter argument"
-                            onChange={handleTopicChange}
-                        />
-                    </Col>
-                    <Col className="text-center">
-                        <Opponent name="Negative" image={negativeImage} />
-                        {negativeArguments.map((argument, index) => (
-                            <OverlayTrigger
-                                trigger="click"
-                                key={index}
-                                placement="right"
-                                overlay={
-                                    <Popover id={index}>
-                                        <Popover.Header as="h3">
-                                            {argument.debate_technique}
-                                        </Popover.Header>
-                                        <Popover.Body>
-                                            {
-                                                argument.debate_technique_explanation
-                                            }
-                                        </Popover.Body>
-                                    </Popover>
-                                }
-                            >
-                                <Button variant="secondary">
-                                    {argument.argument}
-                                </Button>
-                            </OverlayTrigger>
-                        ))}
-                        <Image src={Typing} alt="Typing" />
-                        <FormControl
-                            type="text"
-                            placeholder="Enter argument"
-                            onChange={handleTopicChange}
-                        />
-                    </Col>
-                </Row>
+                {showDebate ? (
+                    <Row>
+                        <Col className="text-center">
+                            <Headline name="Debate!" />
+                            <h3>Topic: {topic}</h3>
+                            <Row>
+                                <Col className="text-center">
+                                    <Opponent
+                                        name="Positive"
+                                        image={positiveImage}
+                                    />
+                                    {positiveArguments.map(
+                                        (argument, index) => (
+                                            <OverlayTrigger
+                                                trigger="click"
+                                                key={index}
+                                                placement="left"
+                                                overlay={
+                                                    <Popover id={index}>
+                                                        <Popover.Header as="h3">
+                                                            {
+                                                                argument.debate_technique
+                                                            }
+                                                        </Popover.Header>
+                                                        <Popover.Body>
+                                                            {
+                                                                argument.debate_technique_explanation
+                                                            }
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }
+                                            >
+                                                <Button variant="secondary">
+                                                    {argument.argument}
+                                                </Button>
+                                            </OverlayTrigger>
+                                        )
+                                    )}
+                                    <Image src={Typing} alt="Typing" />
+                                    <FormControl
+                                        type="text"
+                                        placeholder="Enter argument"
+                                        onChange={handleTopicChange}
+                                    />
+                                </Col>
+                                <Col className="text-center">
+                                    <Opponent
+                                        name="Negative"
+                                        image={negativeImage}
+                                    />
+                                    {negativeArguments.map(
+                                        (argument, index) => (
+                                            <OverlayTrigger
+                                                trigger="click"
+                                                key={index}
+                                                placement="right"
+                                                overlay={
+                                                    <Popover id={index}>
+                                                        <Popover.Header as="h3">
+                                                            {
+                                                                argument.debate_technique
+                                                            }
+                                                        </Popover.Header>
+                                                        <Popover.Body>
+                                                            {
+                                                                argument.debate_technique_explanation
+                                                            }
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }
+                                            >
+                                                <Button variant="secondary">
+                                                    {argument.argument}
+                                                </Button>
+                                            </OverlayTrigger>
+                                        )
+                                    )}
+                                    <Image src={Typing} alt="Typing" />
+                                    <FormControl
+                                        type="text"
+                                        placeholder="Enter argument"
+                                        onChange={handleTopicChange}
+                                    />
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Row>
+                ) : null}
             </Col>
         </Row>
     );
