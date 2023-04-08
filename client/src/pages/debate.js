@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { FormControl } from "react-bootstrap";
+import { Form, FormControl } from "react-bootstrap";
 
 // Bootstrap components
 import Row from "react-bootstrap/Row";
@@ -36,6 +36,9 @@ export default function Debate() {
     const [positiveArguments, setPositiveArguments] = React.useState([]);
     const [negativeArguments, setNegativeArguments] = React.useState([]);
 
+    const [positiveUserArgument, setPositiveUserArgument] = React.useState("");
+    const [negativeUserArgument, setNegativeUserArgument] = React.useState("");
+
     // State variables for topic
     const [topic, setTopic] = React.useState("");
 
@@ -64,56 +67,58 @@ export default function Debate() {
     const initializePositive = async () => {
         let endpoint = "";
 
-        if(positiveOpponent === "Chat-GPT") {
+        if (positiveOpponent === "Chat-GPT") {
             endpoint = "/argument-positive";
         } else if (positiveOpponent === "User") {
             endpoint = "/argument-user";
         }
 
-		try {
-			const response = await fetch(endpoint, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({prompt: "You are a debater in a debate competition."})
-			});
+        try {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    prompt: "You are a debater in a debate competition.",
+                }),
+            });
 
-			const argument = await response.json();
+            const argument = await response.json();
 
-			setPositiveArguments([...positiveArguments, argument]);
-		} catch(error) {
-
-			console.log(error);
-		}
-	};
+            setPositiveArguments([...positiveArguments, argument]);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const initializeNegative = async () => {
         let endpoint = "";
 
-        if(negativeOpponent === "Chat-GPT") {
+        if (negativeOpponent === "Chat-GPT") {
             endpoint = "/argument-negative";
         } else if (negativeOpponent === "User") {
             endpoint = "/argument-user";
         }
-        
-		try {
-			const response = await fetch(endpoint, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({prompt: "You are a debater in a debate competition."})
-			});
 
-			const argument = await response.json();
+        try {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    prompt: "You are a debater in a debate competition.",
+                }),
+            });
+
+            const argument = await response.json();
 
             setNegativeArguments([...negativeArguments, argument]);
-		} catch(error) {
-
-			console.log(error);
-		}
-	};
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const handlePositiveSelect = (data) => {
         if (data === "chat-gpt") {
@@ -153,6 +158,22 @@ export default function Debate() {
     const handleTopicNext = () => {
         setShowTopicModal(false);
         setShowDebate(true);
+    };
+
+    const handlePositiveUserArgumentChange = (event) => {
+        const newValue = event.target.value;
+
+        if (newValue.length <= 100) {
+            setPositiveUserArgument(event.target.value);
+        }
+    };
+
+    const handleNegativeUserArgumentChange = (event) => {
+        const newValue = event.target.value;
+
+        if (newValue.length <= 100) {
+            setNegativeUserArgument(event.target.value);
+        }
     };
 
     return (
@@ -287,11 +308,20 @@ export default function Debate() {
                                         )
                                     )}
                                     <Image src={Typing} alt="Typing" />
-                                    <FormControl
-                                        type="text"
-                                        placeholder="Enter argument"
-                                        onChange={handleTopicChange}
-                                    />
+                                    <Form>
+                                        <Form.Group>
+                                            <Form.Control
+                                                as="textarea"
+                                                maxLength={100}
+                                                type="text"
+                                                placeholder="Enter argument"
+                                                onChange={
+                                                    handlePositiveUserArgumentChange
+                                                }
+                                            />
+                                            <Form.Text>{`${positiveUserArgument.length}/100 characters`}</Form.Text>
+                                        </Form.Group>
+                                    </Form>
                                 </Col>
                                 <Col className="text-center">
                                     <Opponent
@@ -326,11 +356,20 @@ export default function Debate() {
                                         )
                                     )}
                                     <Image src={Typing} alt="Typing" />
-                                    <FormControl
-                                        type="text"
-                                        placeholder="Enter argument"
-                                        onChange={handleTopicChange}
-                                    />
+                                    <Form>
+                                        <Form.Group>
+                                            <Form.Control
+                                                as="textarea"
+                                                maxLength={100}
+                                                type="text"
+                                                placeholder="Enter argument"
+                                                onChange={
+                                                    handleNegativeUserArgumentChange
+                                                }
+                                            />
+                                            <Form.Text>{`${negativeUserArgument.length}/100 characters`}</Form.Text>
+                                        </Form.Group>
+                                    </Form>
                                 </Col>
                             </Row>
                         </Col>
