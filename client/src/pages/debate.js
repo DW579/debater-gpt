@@ -321,6 +321,9 @@ export default function Debate() {
                                             />
                                             <Form.Text>{`${positiveUserArgument.length}/100 characters`}</Form.Text>
                                         </Form.Group>
+                                        <Button variant="primary" type="submit">
+                                            Submit
+                                        </Button>
                                     </Form>
                                 </Col>
                                 <Col className="text-center">
@@ -369,6 +372,9 @@ export default function Debate() {
                                             />
                                             <Form.Text>{`${negativeUserArgument.length}/100 characters`}</Form.Text>
                                         </Form.Group>
+                                        <Button variant="primary" type="submit">
+                                            Submit
+                                        </Button>
                                     </Form>
                                 </Col>
                             </Row>
