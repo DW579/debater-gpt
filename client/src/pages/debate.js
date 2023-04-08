@@ -33,31 +33,8 @@ export default function Debate() {
     const [positiveImage, setPositiveImage] = React.useState(QuestionMark);
     const [negativeImage, setNegativeImage] = React.useState(QuestionMark);
 
-    const [positiveArguments, setPositiveArguments] = React.useState([
-        {
-            argument:
-                "Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
-            debate_technique: "Utilitarianism",
-            debate_technique_explanation:
-                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
-        },
-        {
-            argument:
-                "Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
-            debate_technique: "Utilitarianism",
-            debate_technique_explanation:
-                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
-        },
-    ]);
-    const [negativeArguments, setNegativeArguments] = React.useState([
-        {
-            argument:
-                "Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
-            debate_technique: "Utilitarianism",
-            debate_technique_explanation:
-                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
-        },
-    ]);
+    const [positiveArguments, setPositiveArguments] = React.useState([]);
+    const [negativeArguments, setNegativeArguments] = React.useState([]);
 
     // State variables for topic
     const [topic, setTopic] = React.useState("");
@@ -84,13 +61,67 @@ export default function Debate() {
         window.scrollTo(0, document.body.scrollHeight);
     }, [positiveOpponent, negativeOpponent]);
 
+    const initializePositive = async () => {
+        let endpoint = "";
+
+        if(positiveOpponent === "Chat-GPT") {
+            endpoint = "/argument-positive";
+        } else if (positiveOpponent === "User") {
+            endpoint = "/argument-user";
+        }
+
+		try {
+			const response = await fetch(endpoint, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({prompt: "You are a debater in a debate competition."})
+			});
+
+			const argument = await response.json();
+
+			setPositiveArguments([...positiveArguments, argument]);
+		} catch(error) {
+
+			console.log(error);
+		}
+	};
+
+    const initializeNegative = async () => {
+        let endpoint = "";
+
+        if(negativeOpponent === "Chat-GPT") {
+            endpoint = "/argument-negative";
+        } else if (negativeOpponent === "User") {
+            endpoint = "/argument-user";
+        }
+        
+		try {
+			const response = await fetch(endpoint, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({prompt: "You are a debater in a debate competition."})
+			});
+
+			const argument = await response.json();
+
+            setNegativeArguments([...negativeArguments, argument]);
+		} catch(error) {
+
+			console.log(error);
+		}
+	};
+
     const handlePositiveSelect = (data) => {
         if (data === "chat-gpt") {
             setPositiveImage(OpenaiLogo);
             setPositiveOpponent("Chat-GPT");
-        } else if (data === "human") {
+        } else if (data === "user") {
             setPositiveImage(UserImage);
-            setPositiveOpponent("Human");
+            setPositiveOpponent("User");
         }
     };
 
@@ -98,9 +129,9 @@ export default function Debate() {
         if (data === "chat-gpt") {
             setNegativeImage(OpenaiLogo);
             setNegativeOpponent("Chat-GPT");
-        } else if (data === "human") {
+        } else if (data === "user") {
             setNegativeImage(UserImage);
-            setNegativeOpponent("Human");
+            setNegativeOpponent("User");
         }
     };
 
@@ -122,8 +153,6 @@ export default function Debate() {
     const handleTopicNext = () => {
         setShowTopicModal(false);
         setShowDebate(true);
-
-        
     };
 
     return (
@@ -148,8 +177,8 @@ export default function Debate() {
                                     <Dropdown.Item eventKey="chat-gpt">
                                         Chat-GPT
                                     </Dropdown.Item>
-                                    <Dropdown.Item eventKey="human">
-                                        Human
+                                    <Dropdown.Item eventKey="user">
+                                        User
                                     </Dropdown.Item>
                                 </DropdownButton>
                             </Col>
@@ -166,8 +195,8 @@ export default function Debate() {
                                     <Dropdown.Item eventKey="chat-gpt">
                                         Chat-GPT
                                     </Dropdown.Item>
-                                    <Dropdown.Item eventKey="human">
-                                        Human
+                                    <Dropdown.Item eventKey="user">
+                                        User
                                     </Dropdown.Item>
                                 </DropdownButton>
                             </Col>
@@ -208,7 +237,11 @@ export default function Debate() {
                         <Button
                             variant="primary"
                             disabled={disableTopicButton}
-                            onClick={handleTopicNext}
+                            onClick={() => {
+                                handleTopicNext();
+                                initializePositive();
+                                initializeNegative();
+                            }}
                         >
                             Begin Debate
                         </Button>
