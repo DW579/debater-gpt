@@ -26,35 +26,36 @@ export default function Debate() {
     const [showDebate, setShowDebate] = React.useState(false);
 
     // State variables for opponent and opponent image
-    const [positiveOpponent, setPositiveOpponent] =
-        React.useState("Select Opponent");
-    const [negativeOpponent, setNegativeOpponent] =
-        React.useState("Select Opponent");
+    const [positiveOpponent, setPositiveOpponent] = React.useState("Select Opponent");
+    const [negativeOpponent, setNegativeOpponent] = React.useState("Select Opponent");
     const [positiveImage, setPositiveImage] = React.useState(QuestionMark);
     const [negativeImage, setNegativeImage] = React.useState(QuestionMark);
 
+    // State variable for turn indicator (true = positive, false = negative)
+    const [isPositiveTurn, setIsPositiveTurn] = React.useState(true);
+
+    const [waitingPositiveArgument, setWaitingPositiveArgument] = React.useState(false);
+    const [waitingNegativeArgument, setWaitingNegativeArgument] = React.useState(false);
+
+    // State variables for arguments
     const [positiveArguments, setPositiveArguments] = React.useState([]);
     const [negativeArguments, setNegativeArguments] = React.useState([]);
 
+    // State variables for user argument
     const [positiveUserArgument, setPositiveUserArgument] = React.useState("");
     const [negativeUserArgument, setNegativeUserArgument] = React.useState("");
 
-    const [
-        positiveUserArgumentDisabled,
-        setPositiveUserArgumentButtonDisabled,
-    ] = React.useState(true);
-    const [
-        negativeUserArgumentButtonDisabled,
-        setNegativeUserArgumentButtonDisabled,
-    ] = React.useState(true);
+    // State variables for disabling user argument buttons
+    const [positiveUserArgumentDisabled, setPositiveUserArgumentButtonDisabled] = React.useState(true);
+    const [negativeUserArgumentButtonDisabled, setNegativeUserArgumentButtonDisabled] = React.useState(true);
 
     // State variables for topic
     const [topic, setTopic] = React.useState("");
 
     // State variable for disabling opponent button
-    const [disableOpponentButton, setDisableOpponentButton] =
-        React.useState(true);
+    const [disableOpponentButton, setDisableOpponentButton] = React.useState(true);
 
+    // State variable for disabling topic button
     const [disableTopicButton, setDisableTopicButton] = React.useState(true);
 
     // State variables for modals
@@ -328,29 +329,41 @@ export default function Debate() {
                                             </OverlayTrigger>
                                         )
                                     )}
-                                    <Image src={Typing} alt="Typing" />
-                                    <Form>
-                                        <Form.Group>
-                                            <Form.Control
-                                                as="textarea"
-                                                maxLength={100}
-                                                type="text"
-                                                placeholder="Enter argument"
-                                                onChange={
-                                                    handlePositiveUserArgumentChange
+                                    {waitingPositiveArgument && (
+                                        <Image src={Typing} alt="Typing" />
+                                    )}
+
+                                    {isPositiveTurn &&
+                                        positiveOpponent === "Chat-GPT" && (
+                                            <Button variant="primary">
+                                                Respond
+                                            </Button>
+                                        )}
+
+                                    {isPositiveTurn && positiveOpponent === "User" && (
+                                        <Form>
+                                            <Form.Group>
+                                                <Form.Control
+                                                    as="textarea"
+                                                    maxLength={100}
+                                                    type="text"
+                                                    placeholder="Enter argument"
+                                                    onChange={
+                                                        handlePositiveUserArgumentChange
+                                                    }
+                                                />
+                                                <Form.Text>{`${positiveUserArgument.length}/100 characters`}</Form.Text>
+                                            </Form.Group>
+                                            <Button
+                                                variant="primary"
+                                                disabled={
+                                                    positiveUserArgumentDisabled
                                                 }
-                                            />
-                                            <Form.Text>{`${positiveUserArgument.length}/100 characters`}</Form.Text>
-                                        </Form.Group>
-                                        <Button
-                                            variant="primary"
-                                            disabled={
-                                                positiveUserArgumentDisabled
-                                            }
-                                        >
-                                            Submit
-                                        </Button>
-                                    </Form>
+                                            >
+                                                Submit
+                                            </Button>
+                                        </Form>
+                                    )}
                                 </Col>
                                 <Col className="text-center">
                                     <Opponent
@@ -384,29 +397,38 @@ export default function Debate() {
                                             </OverlayTrigger>
                                         )
                                     )}
-                                    <Image src={Typing} alt="Typing" />
-                                    <Form>
-                                        <Form.Group>
-                                            <Form.Control
-                                                as="textarea"
-                                                maxLength={100}
-                                                type="text"
-                                                placeholder="Enter argument"
-                                                onChange={
-                                                    handleNegativeUserArgumentChange
+                                    {waitingNegativeArgument && (
+                                        <Image src={Typing} alt="Typing" />
+                                    )}
+
+                                    {!isPositiveTurn && negativeOpponent === "Chat-GPT" && (
+                                        <Button variant="primary">Respond</Button>
+                                    )}
+
+                                    {!isPositiveTurn && negativeOpponent === "User" && (
+                                        <Form>
+                                            <Form.Group>
+                                                <Form.Control
+                                                    as="textarea"
+                                                    maxLength={100}
+                                                    type="text"
+                                                    placeholder="Enter argument"
+                                                    onChange={
+                                                        handleNegativeUserArgumentChange
+                                                    }
+                                                />
+                                                <Form.Text>{`${negativeUserArgument.length}/100 characters`}</Form.Text>
+                                            </Form.Group>
+                                            <Button
+                                                variant="primary"
+                                                disabled={
+                                                    negativeUserArgumentButtonDisabled
                                                 }
-                                            />
-                                            <Form.Text>{`${negativeUserArgument.length}/100 characters`}</Form.Text>
-                                        </Form.Group>
-                                        <Button
-                                            variant="primary"
-                                            disabled={
-                                                negativeUserArgumentButtonDisabled
-                                            }
-                                        >
-                                            Submit
-                                        </Button>
-                                    </Form>
+                                            >
+                                                Submit
+                                            </Button>
+                                        </Form>
+                                    )}
                                 </Col>
                             </Row>
                         </Col>
