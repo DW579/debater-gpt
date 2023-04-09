@@ -24,18 +24,25 @@ import Typing from "../images/typing.gif";
 
 export default function Debate() {
     const [showDebate, setShowDebate] = React.useState(false);
+    const [showEndDebate, setShowEndDebate] = React.useState(false);
 
     // State variables for opponent and opponent image
-    const [positiveOpponent, setPositiveOpponent] = React.useState("Select Opponent");
-    const [negativeOpponent, setNegativeOpponent] = React.useState("Select Opponent");
+    const [positiveOpponent, setPositiveOpponent] =
+        React.useState("Select Opponent");
+    const [negativeOpponent, setNegativeOpponent] =
+        React.useState("Select Opponent");
     const [positiveImage, setPositiveImage] = React.useState(QuestionMark);
     const [negativeImage, setNegativeImage] = React.useState(QuestionMark);
 
     // State variable for turn indicator (true = positive, false = negative)
-    const [isPositiveTurn, setIsPositiveTurn] = React.useState(false);
+    const [isPositiveTurn, setIsPositiveTurn] = React.useState(true);
 
-    const [waitingPositiveArgument, setWaitingPositiveArgument] = React.useState(false);
-    const [waitingNegativeArgument, setWaitingNegativeArgument] = React.useState(false);
+    const [round, setRound] = React.useState(1);
+
+    const [waitingPositiveArgument, setWaitingPositiveArgument] =
+        React.useState(false);
+    const [waitingNegativeArgument, setWaitingNegativeArgument] =
+        React.useState(false);
 
     // State variables for arguments
     const [positiveArguments, setPositiveArguments] = React.useState([]);
@@ -46,14 +53,21 @@ export default function Debate() {
     const [negativeUserArgument, setNegativeUserArgument] = React.useState("");
 
     // State variables for disabling user argument buttons
-    const [positiveUserArgumentDisabled, setPositiveUserArgumentButtonDisabled] = React.useState(true);
-    const [negativeUserArgumentButtonDisabled, setNegativeUserArgumentButtonDisabled] = React.useState(true);
+    const [
+        positiveUserArgumentDisabled,
+        setPositiveUserArgumentButtonDisabled,
+    ] = React.useState(true);
+    const [
+        negativeUserArgumentButtonDisabled,
+        setNegativeUserArgumentButtonDisabled,
+    ] = React.useState(true);
 
     // State variables for topic
     const [topic, setTopic] = React.useState("");
 
     // State variable for disabling opponent button
-    const [disableOpponentButton, setDisableOpponentButton] = React.useState(true);
+    const [disableOpponentButton, setDisableOpponentButton] =
+        React.useState(true);
 
     // State variable for disabling topic button
     const [disableTopicButton, setDisableTopicButton] = React.useState(true);
@@ -92,13 +106,13 @@ export default function Debate() {
                 const argument = await response.json();
 
                 setWaitingPositiveArgument(false);
+                setIsPositiveTurn(false);
 
                 setPositiveArguments([...positiveArguments, argument]);
             } catch (error) {
                 console.log(error);
             }
-        }
-        else {
+        } else {
             setIsPositiveTurn(true);
         }
     };
@@ -168,6 +182,72 @@ export default function Debate() {
             setNegativeUserArgumentButtonDisabled(false);
         } else {
             setNegativeUserArgumentButtonDisabled(true);
+        }
+    };
+
+    const handlePositiveArgument = async (event) => {
+        if (positiveOpponent === "Chat-GPT") {
+            setWaitingPositiveArgument(true);
+
+            try {
+                const response = await fetch("/argument-positive", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        prompt: "This should be the argument from the negative debater",
+                    }),
+                });
+
+                const argument = await response.json();
+
+                setWaitingPositiveArgument(false);
+                setIsPositiveTurn(false);
+
+                setPositiveArguments([...positiveArguments, argument]);
+
+                window.scrollTo(0, document.body.scrollHeight);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            console.log("User argument: " + event.target.value);
+        }
+    };
+
+    const handleNegativeArgument = async (event) => {
+        if (negativeOpponent === "Chat-GPT") {
+            setWaitingNegativeArgument(true);
+
+            try {
+                const response = await fetch("/argument-negative", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        prompt: "This should be the argument from the positive debater",
+                    }),
+                });
+
+                const argument = await response.json();
+
+                setWaitingNegativeArgument(false);
+                setIsPositiveTurn(true);
+
+                setNegativeArguments([...negativeArguments, argument]);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            console.log("User argument: " + event.target.value);
+        }
+
+        if (round < 3) {
+            setRound(round + 1);
+        } else {
+            setShowEndDebate(true);
         }
     };
 
@@ -305,34 +385,40 @@ export default function Debate() {
                                         <Image src={Typing} alt="Typing" />
                                     )}
 
-                                    {isPositiveTurn && !waitingNegativeArgument && positiveOpponent === "Chat-GPT" && (
-                                        <Button variant="primary">Respond</Button>
-                                    )}
-
-                                    {isPositiveTurn && positiveOpponent === "User" && (
-                                        <Form>
-                                            <Form.Group>
-                                                <Form.Control
-                                                    as="textarea"
-                                                    maxLength={100}
-                                                    type="text"
-                                                    placeholder="Enter argument"
-                                                    onChange={
-                                                        handlePositiveUserArgumentChange
-                                                    }
-                                                />
-                                                <Form.Text>{`${positiveUserArgument.length}/100 characters`}</Form.Text>
-                                            </Form.Group>
+                                    {isPositiveTurn && !waitingPositiveArgument && !showEndDebate && positiveOpponent === "Chat-GPT" && (
                                             <Button
                                                 variant="primary"
-                                                disabled={
-                                                    positiveUserArgumentDisabled
-                                                }
+                                                onClick={handlePositiveArgument}
                                             >
-                                                Submit
+                                                Respond
                                             </Button>
-                                        </Form>
-                                    )}
+                                        )}
+
+                                    {isPositiveTurn &&
+                                        positiveOpponent === "User" && (
+                                            <Form>
+                                                <Form.Group>
+                                                    <Form.Control
+                                                        as="textarea"
+                                                        maxLength={100}
+                                                        type="text"
+                                                        placeholder="Enter argument"
+                                                        onChange={
+                                                            handlePositiveUserArgumentChange
+                                                        }
+                                                    />
+                                                    <Form.Text>{`${positiveUserArgument.length}/100 characters`}</Form.Text>
+                                                </Form.Group>
+                                                <Button
+                                                    variant="primary"
+                                                    disabled={
+                                                        positiveUserArgumentDisabled
+                                                    }
+                                                >
+                                                    Submit
+                                                </Button>
+                                            </Form>
+                                        )}
                                 </Col>
                                 <Col className="text-center">
                                     <Opponent
@@ -370,36 +456,49 @@ export default function Debate() {
                                         <Image src={Typing} alt="Typing" />
                                     )}
 
-                                    {!isPositiveTurn && !waitingPositiveArgument && negativeOpponent === "Chat-GPT" && (
-                                        <Button variant="primary">Respond</Button>
-                                    )}
-
-                                    {!isPositiveTurn && negativeOpponent === "User" && (
-                                        <Form>
-                                            <Form.Group>
-                                                <Form.Control
-                                                    as="textarea"
-                                                    maxLength={100}
-                                                    type="text"
-                                                    placeholder="Enter argument"
-                                                    onChange={
-                                                        handleNegativeUserArgumentChange
-                                                    }
-                                                />
-                                                <Form.Text>{`${negativeUserArgument.length}/100 characters`}</Form.Text>
-                                            </Form.Group>
+                                    {!isPositiveTurn && !waitingNegativeArgument && !showEndDebate && negativeOpponent === "Chat-GPT" && (
                                             <Button
                                                 variant="primary"
-                                                disabled={
-                                                    negativeUserArgumentButtonDisabled
-                                                }
+                                                onClick={handleNegativeArgument}
                                             >
-                                                Submit
+                                                Respond
                                             </Button>
-                                        </Form>
-                                    )}
+                                        )}
+
+                                    {!isPositiveTurn &&
+                                        negativeOpponent === "User" && (
+                                            <Form>
+                                                <Form.Group>
+                                                    <Form.Control
+                                                        as="textarea"
+                                                        maxLength={100}
+                                                        type="text"
+                                                        placeholder="Enter argument"
+                                                        onChange={
+                                                            handleNegativeUserArgumentChange
+                                                        }
+                                                    />
+                                                    <Form.Text>{`${negativeUserArgument.length}/100 characters`}</Form.Text>
+                                                </Form.Group>
+                                                <Button
+                                                    variant="primary"
+                                                    disabled={
+                                                        negativeUserArgumentButtonDisabled
+                                                    }
+                                                >
+                                                    Submit
+                                                </Button>
+                                            </Form>
+                                        )}
                                 </Col>
                             </Row>
+                            {showEndDebate ? (
+                                <Row>
+                                    <Col className="text-center">
+                                        <h1>Debate has ended!</h1>
+                                    </Col>
+                                </Row>
+                            ) : null}
                         </Col>
                     </Row>
                 ) : null}
