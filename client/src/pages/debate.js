@@ -225,31 +225,37 @@ export default function Debate() {
     };
 
     const handleNegativeArgument = async (event) => {
+        event.preventDefault();
+
+        let endpoint = "";
+
         if (negativeOpponent === "Chat-GPT") {
-            setWaitingNegativeArgument(true);
-
-            try {
-                const response = await fetch("/argument-negative", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        prompt: "This should be the argument from the positive debater",
-                    }),
-                });
-
-                const argument = await response.json();
-
-                setWaitingNegativeArgument(false);
-                setIsPositiveTurn(true);
-
-                setNegativeArguments([...negativeArguments, argument]);
-            } catch (error) {
-                console.log(error);
-            }
+            endpoint = "/argument-negative";
         } else {
-            console.log("User argument: " + event.target.value);
+            endpoint = "/argument-user";
+        }
+
+        setWaitingNegativeArgument(true);
+
+        try {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    prompt: "This should be the argument from the positive debater",
+                }),
+            });
+
+            const argument = await response.json();
+
+            setWaitingNegativeArgument(false);
+            setIsPositiveTurn(true);
+
+            setNegativeArguments([...negativeArguments, argument]);
+        } catch (error) {
+            console.log(error);
         }
 
         if (round < 3) {
@@ -473,9 +479,8 @@ export default function Debate() {
                                             </Button>
                                         )}
 
-                                    {!isPositiveTurn &&
-                                        negativeOpponent === "User" && (
-                                            <Form>
+                                    {!isPositiveTurn && !waitingNegativeArgument && negativeOpponent === "User" && (
+                                            <Form onSubmit={handleNegativeArgument}>
                                                 <Form.Group>
                                                     <Form.Control
                                                         as="textarea"
@@ -493,6 +498,7 @@ export default function Debate() {
                                                     disabled={
                                                         negativeUserArgumentButtonDisabled
                                                     }
+                                                    type="submit"
                                                 >
                                                     Submit
                                                 </Button>
