@@ -39,6 +39,15 @@ export default function Debate() {
     const [positiveUserArgument, setPositiveUserArgument] = React.useState("");
     const [negativeUserArgument, setNegativeUserArgument] = React.useState("");
 
+    const [
+        positiveUserArgumentDisabled,
+        setPositiveUserArgumentButtonDisabled,
+    ] = React.useState(true);
+    const [
+        negativeUserArgumentButtonDisabled,
+        setNegativeUserArgumentButtonDisabled,
+    ] = React.useState(true);
+
     // State variables for topic
     const [topic, setTopic] = React.useState("");
 
@@ -166,6 +175,12 @@ export default function Debate() {
         if (newValue.length <= 100) {
             setPositiveUserArgument(event.target.value);
         }
+
+        if (newValue.length > 0) {
+            setPositiveUserArgumentButtonDisabled(false);
+        } else {
+            setPositiveUserArgumentButtonDisabled(true);
+        }
     };
 
     const handleNegativeUserArgumentChange = (event) => {
@@ -173,6 +188,12 @@ export default function Debate() {
 
         if (newValue.length <= 100) {
             setNegativeUserArgument(event.target.value);
+        }
+
+        if (newValue.length > 0) {
+            setNegativeUserArgumentButtonDisabled(false);
+        } else {
+            setNegativeUserArgumentButtonDisabled(true);
         }
     };
 
@@ -321,7 +342,12 @@ export default function Debate() {
                                             />
                                             <Form.Text>{`${positiveUserArgument.length}/100 characters`}</Form.Text>
                                         </Form.Group>
-                                        <Button variant="primary" type="submit">
+                                        <Button
+                                            variant="primary"
+                                            disabled={
+                                                positiveUserArgumentDisabled
+                                            }
+                                        >
                                             Submit
                                         </Button>
                                     </Form>
@@ -372,7 +398,12 @@ export default function Debate() {
                                             />
                                             <Form.Text>{`${negativeUserArgument.length}/100 characters`}</Form.Text>
                                         </Form.Group>
-                                        <Button variant="primary" type="submit">
+                                        <Button
+                                            variant="primary"
+                                            disabled={
+                                                negativeUserArgumentButtonDisabled
+                                            }
+                                        >
                                             Submit
                                         </Button>
                                     </Form>
