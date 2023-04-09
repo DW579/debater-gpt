@@ -186,34 +186,42 @@ export default function Debate() {
     };
 
     const handlePositiveArgument = async (event) => {
+        event.preventDefault();
+
+        let endpoint = "";
+
         if (positiveOpponent === "Chat-GPT") {
-            setWaitingPositiveArgument(true);
-
-            try {
-                const response = await fetch("/argument-positive", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        prompt: "This should be the argument from the negative debater",
-                    }),
-                });
-
-                const argument = await response.json();
-
-                setWaitingPositiveArgument(false);
-                setIsPositiveTurn(false);
-
-                setPositiveArguments([...positiveArguments, argument]);
-
-                window.scrollTo(0, document.body.scrollHeight);
-            } catch (error) {
-                console.log(error);
-            }
+            endpoint = "/argument-positive";
         } else {
-            console.log("User argument: " + event.target.value);
+            endpoint = "/argument-user";
+            // console.log("User argument: " + positiveUserArgument);
         }
+
+        setWaitingPositiveArgument(true);
+
+        try {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    prompt: "This should be the argument from the negative debater",
+                }),
+            });
+
+            const argument = await response.json();
+
+            setWaitingPositiveArgument(false);
+            setIsPositiveTurn(false);
+
+            setPositiveArguments([...positiveArguments, argument]);
+
+            window.scrollTo(0, document.body.scrollHeight);
+        } catch (error) {
+            console.log(error);
+        }
+
     };
 
     const handleNegativeArgument = async (event) => {
@@ -394,9 +402,8 @@ export default function Debate() {
                                             </Button>
                                         )}
 
-                                    {isPositiveTurn &&
-                                        positiveOpponent === "User" && (
-                                            <Form>
+                                    {isPositiveTurn && !waitingPositiveArgument && !showEndDebate && positiveOpponent === "User" && (
+                                            <Form onSubmit={handlePositiveArgument}>
                                                 <Form.Group>
                                                     <Form.Control
                                                         as="textarea"
@@ -414,6 +421,7 @@ export default function Debate() {
                                                     disabled={
                                                         positiveUserArgumentDisabled
                                                     }
+                                                    type="submit"
                                                 >
                                                     Submit
                                                 </Button>
