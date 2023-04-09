@@ -27,7 +27,6 @@ app.use(bodyParser.json());
 app.post("/argument-positive", (req, res) => {
     const prompt = req.body.prompt;
 
-    console.log("positive prompt: ", prompt);
     res.json({
         argument:
             "Positive: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
@@ -40,7 +39,6 @@ app.post("/argument-positive", (req, res) => {
 app.post("/argument-negative", (req, res) => {
     const prompt = req.body.prompt;
 
-    console.log("negative prompt: ", prompt);
     res.json({
         argument:
             "Negative: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
@@ -53,7 +51,6 @@ app.post("/argument-negative", (req, res) => {
 app.post("/argument-user", (req, res) => {
     const prompt = req.body.prompt;
 
-    console.log("negative prompt: ", prompt);
     res.json({
         argument:
             "User: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",

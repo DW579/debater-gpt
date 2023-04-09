@@ -15,13 +15,6 @@ import Debate from "./pages/debate";
 import Header from "./components/header";
 
 function App() {
-    // const [data, setData] = React.useState(null);
-
-    // React.useEffect(() => {
-    //     fetch("/api")
-    //         .then((res) => res.json())
-    //         .then((data) => setData(data.message));
-    // }, []);
 
     return (
         <Container fluid className="custom-container">
