@@ -221,7 +221,6 @@ export default function Debate() {
         } catch (error) {
             console.log(error);
         }
-
     };
 
     const handleNegativeArgument = async (event) => {
@@ -399,7 +398,10 @@ export default function Debate() {
                                         <Image src={Typing} alt="Typing" />
                                     )}
 
-                                    {isPositiveTurn && !waitingPositiveArgument && !showEndDebate && positiveOpponent === "Chat-GPT" && (
+                                    {isPositiveTurn &&
+                                        !waitingPositiveArgument &&
+                                        !showEndDebate &&
+                                        positiveOpponent === "Chat-GPT" && (
                                             <Button
                                                 variant="primary"
                                                 onClick={handlePositiveArgument}
@@ -408,8 +410,15 @@ export default function Debate() {
                                             </Button>
                                         )}
 
-                                    {isPositiveTurn && !waitingPositiveArgument && !showEndDebate && positiveOpponent === "User" && (
-                                            <Form onSubmit={handlePositiveArgument}>
+                                    {isPositiveTurn &&
+                                        !waitingPositiveArgument &&
+                                        !showEndDebate &&
+                                        positiveOpponent === "User" && (
+                                            <Form
+                                                onSubmit={
+                                                    handlePositiveArgument
+                                                }
+                                            >
                                                 <Form.Group>
                                                     <Form.Control
                                                         as="textarea"
@@ -470,7 +479,10 @@ export default function Debate() {
                                         <Image src={Typing} alt="Typing" />
                                     )}
 
-                                    {!isPositiveTurn && !waitingNegativeArgument && !showEndDebate && negativeOpponent === "Chat-GPT" && (
+                                    {!isPositiveTurn &&
+                                        !waitingNegativeArgument &&
+                                        !showEndDebate &&
+                                        negativeOpponent === "Chat-GPT" && (
                                             <Button
                                                 variant="primary"
                                                 onClick={handleNegativeArgument}
@@ -479,8 +491,14 @@ export default function Debate() {
                                             </Button>
                                         )}
 
-                                    {!isPositiveTurn && !waitingNegativeArgument && negativeOpponent === "User" && (
-                                            <Form onSubmit={handleNegativeArgument}>
+                                    {!isPositiveTurn &&
+                                        !waitingNegativeArgument &&
+                                        negativeOpponent === "User" && (
+                                            <Form
+                                                onSubmit={
+                                                    handleNegativeArgument
+                                                }
+                                            >
                                                 <Form.Group>
                                                     <Form.Control
                                                         as="textarea"
