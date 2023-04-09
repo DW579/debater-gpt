@@ -195,10 +195,10 @@ export default function Debate() {
 
         if (positiveOpponent === "Chat-GPT") {
             endpoint = "/argument-positive";
-            prompt = "You are a debater in a debate competition.";
+            prompt = negativeArguments[negativeArguments.length - 1].argument + ". Return only a json object with keys, argument, debate_technique, and debate_technique_explanation. Each value should be no longer than a paragraph.";
         } else {
             endpoint = "/argument-user";
-            prompt = positiveUserArgument;
+            prompt = "Argument: " + positiveUserArgument + ". Return only a json object with keys, debate_technique, and debate_technique_explanation. Each value should be no longer than a paragraph.";
         }
 
         setWaitingPositiveArgument(true);
@@ -233,12 +233,16 @@ export default function Debate() {
         let endpoint = "";
         let prompt = "";
 
+        if(round === 1 && negativeOpponent === "Chat-GPT") {
+            prompt = "You are a debater in a debate competition. You will argue in the negative. I will argue in the positive. The topic is, " + topic + ". First opponent argument is, ";
+        }
+
         if (negativeOpponent === "Chat-GPT") {
             endpoint = "/argument-negative";
-            prompt = "You are a debater in a debate competition.";
+            prompt += positiveArguments[positiveArguments.length - 1].argument + ". Return only a json object with keys, argument, debate_technique, and debate_technique_explanation. Each value should be no longer than a paragraph.";
         } else {
             endpoint = "/argument-user";
-            prompt = negativeUserArgument;
+            prompt = "Argument: " + negativeUserArgument + ". Return only a json object with keys, debate_technique, and debate_technique_explanation. Each value should be no longer than a paragraph.";
         }
 
         setWaitingNegativeArgument(true);
