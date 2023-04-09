@@ -89,6 +89,8 @@ export default function Debate() {
     }, [positiveOpponent, negativeOpponent]);
 
     const initializePositive = async () => {
+        const prompt = "You are a debater in a debate competition. You will argue in the positive. I will argue in the negative. The topic is, " + topic + ". You will go first. Return only a json object with keys, argument, debate_technique, and debate_technique_explanation. Each value should be no longer than a paragraph.";
+        
         if (positiveOpponent === "Chat-GPT") {
             setWaitingPositiveArgument(true);
 
@@ -99,7 +101,7 @@ export default function Debate() {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        prompt: "You are a debater in a debate competition.",
+                        prompt: prompt,
                     }),
                 });
 
@@ -189,12 +191,14 @@ export default function Debate() {
         event.preventDefault();
 
         let endpoint = "";
+        let prompt = "";
 
         if (positiveOpponent === "Chat-GPT") {
             endpoint = "/argument-positive";
+            prompt = "You are a debater in a debate competition.";
         } else {
             endpoint = "/argument-user";
-            // console.log("User argument: " + positiveUserArgument);
+            prompt = positiveUserArgument;
         }
 
         setWaitingPositiveArgument(true);
@@ -206,7 +210,7 @@ export default function Debate() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    prompt: "This should be the argument from the negative debater",
+                    prompt: prompt,
                 }),
             });
 
@@ -227,11 +231,14 @@ export default function Debate() {
         event.preventDefault();
 
         let endpoint = "";
+        let prompt = "";
 
         if (negativeOpponent === "Chat-GPT") {
             endpoint = "/argument-negative";
+            prompt = "You are a debater in a debate competition.";
         } else {
             endpoint = "/argument-user";
+            prompt = negativeUserArgument;
         }
 
         setWaitingNegativeArgument(true);
@@ -243,7 +250,7 @@ export default function Debate() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    prompt: "This should be the argument from the positive debater",
+                    prompt: prompt,
                 }),
             });
 

@@ -27,6 +27,8 @@ app.use(bodyParser.json());
 app.post("/argument-positive", (req, res) => {
     const prompt = req.body.prompt;
 
+    console.log("Prompt: ", prompt);
+
     setTimeout(() => {
         res.json({
             argument:
@@ -41,6 +43,8 @@ app.post("/argument-positive", (req, res) => {
 app.post("/argument-negative", (req, res) => {
     const prompt = req.body.prompt;
 
+    console.log("Prompt: ", prompt);
+
     setTimeout(() => {
         res.json({
             argument:
@@ -54,6 +58,8 @@ app.post("/argument-negative", (req, res) => {
 
 app.post("/argument-user", (req, res) => {
     const prompt = req.body.prompt;
+
+    console.log("Prompt: ", prompt);
 
     setTimeout(() => {
         res.json({
