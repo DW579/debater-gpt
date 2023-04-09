@@ -27,37 +27,43 @@ app.use(bodyParser.json());
 app.post("/argument-positive", (req, res) => {
     const prompt = req.body.prompt;
 
-    res.json({
-        argument:
-            "Positive: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
-        debate_technique: "Utilitarianism",
-        debate_technique_explanation:
-            "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
-    });
+    setTimeout(() => {
+        res.json({
+            argument:
+                "Positive: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
+            debate_technique: "Utilitarianism",
+            debate_technique_explanation:
+                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
+        });
+    }, 5000);
 });
 
 app.post("/argument-negative", (req, res) => {
     const prompt = req.body.prompt;
 
-    res.json({
-        argument:
-            "Negative: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
-        debate_technique: "Utilitarianism",
-        debate_technique_explanation:
-            "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
-    });
+    setTimeout(() => {
+        res.json({
+            argument:
+                "Negative: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
+            debate_technique: "Utilitarianism",
+            debate_technique_explanation:
+                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
+        });
+    }, 5000);
 });
 
 app.post("/argument-user", (req, res) => {
     const prompt = req.body.prompt;
 
-    res.json({
-        argument:
-            "User: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
-        debate_technique: "Utilitarianism",
-        debate_technique_explanation:
-            "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
-    });
+    setTimeout(() => {
+        res.json({
+            argument:
+                "User: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
+            debate_technique: "Utilitarianism",
+            debate_technique_explanation:
+                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
+        });
+    }, 5000);
 });
 
 app.get("/api", (req, res) => {

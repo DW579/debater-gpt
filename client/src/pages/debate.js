@@ -32,7 +32,7 @@ export default function Debate() {
     const [negativeImage, setNegativeImage] = React.useState(QuestionMark);
 
     // State variable for turn indicator (true = positive, false = negative)
-    const [isPositiveTurn, setIsPositiveTurn] = React.useState(true);
+    const [isPositiveTurn, setIsPositiveTurn] = React.useState(false);
 
     const [waitingPositiveArgument, setWaitingPositiveArgument] = React.useState(false);
     const [waitingNegativeArgument, setWaitingNegativeArgument] = React.useState(false);
@@ -75,58 +75,31 @@ export default function Debate() {
     }, [positiveOpponent, negativeOpponent]);
 
     const initializePositive = async () => {
-        let endpoint = "";
-
         if (positiveOpponent === "Chat-GPT") {
-            endpoint = "/argument-positive";
-        } else if (positiveOpponent === "User") {
-            endpoint = "/argument-user";
+            setWaitingPositiveArgument(true);
+
+            try {
+                const response = await fetch("/argument-positive", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        prompt: "You are a debater in a debate competition.",
+                    }),
+                });
+
+                const argument = await response.json();
+
+                setWaitingPositiveArgument(false);
+
+                setPositiveArguments([...positiveArguments, argument]);
+            } catch (error) {
+                console.log(error);
+            }
         }
-
-        try {
-            const response = await fetch(endpoint, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    prompt: "You are a debater in a debate competition.",
-                }),
-            });
-
-            const argument = await response.json();
-
-            setPositiveArguments([...positiveArguments, argument]);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const initializeNegative = async () => {
-        let endpoint = "";
-
-        if (negativeOpponent === "Chat-GPT") {
-            endpoint = "/argument-negative";
-        } else if (negativeOpponent === "User") {
-            endpoint = "/argument-user";
-        }
-
-        try {
-            const response = await fetch(endpoint, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    prompt: "You are a debater in a debate competition.",
-                }),
-            });
-
-            const argument = await response.json();
-
-            setNegativeArguments([...negativeArguments, argument]);
-        } catch (error) {
-            console.log(error);
+        else {
+            setIsPositiveTurn(true);
         }
     };
 
@@ -283,7 +256,6 @@ export default function Debate() {
                             onClick={() => {
                                 handleTopicNext();
                                 initializePositive();
-                                initializeNegative();
                             }}
                         >
                             Begin Debate
@@ -333,12 +305,9 @@ export default function Debate() {
                                         <Image src={Typing} alt="Typing" />
                                     )}
 
-                                    {isPositiveTurn &&
-                                        positiveOpponent === "Chat-GPT" && (
-                                            <Button variant="primary">
-                                                Respond
-                                            </Button>
-                                        )}
+                                    {isPositiveTurn && !waitingNegativeArgument && positiveOpponent === "Chat-GPT" && (
+                                        <Button variant="primary">Respond</Button>
+                                    )}
 
                                     {isPositiveTurn && positiveOpponent === "User" && (
                                         <Form>
@@ -401,7 +370,7 @@ export default function Debate() {
                                         <Image src={Typing} alt="Typing" />
                                     )}
 
-                                    {!isPositiveTurn && negativeOpponent === "Chat-GPT" && (
+                                    {!isPositiveTurn && !waitingPositiveArgument && negativeOpponent === "Chat-GPT" && (
                                         <Button variant="primary">Respond</Button>
                                     )}
 
