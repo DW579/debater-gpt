@@ -19,7 +19,8 @@ app.use(bodyParser.json());
 app.post("/argument-gpt", (req, res) => {
     const prompt = req.body.prompt;
     const opponent = req.body.opponent;
-    let argument = "Argument: " + prompt + ". " + opponent + " response: ";
+    const topic = req.body.topic;
+    let argument = "Topic:" + topic + ". Argument: " + prompt + ". Response in the " + opponent + " of the topic: ";
     let response_data = {
         argument: "",
         argument_technique_name: "",
@@ -32,9 +33,12 @@ app.post("/argument-gpt", (req, res) => {
                 model: "text-davinci-003",
                 prompt: prompt,
                 max_tokens: 256,
-                temperature: 0.7,
+                temperature: 1,
                 n: 1,
                 stream: false,
+                top_p: 1,
+                frequency_penalty: 2,
+                presence_penalty: 2,
             });
 
             return completion;

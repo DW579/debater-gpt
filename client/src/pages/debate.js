@@ -197,6 +197,7 @@ export default function Debate() {
                 body: JSON.stringify({
                     prompt: prompt,
                     opponent: "positive",
+                    topic: topic,
                 }),
             });
 
@@ -238,6 +239,7 @@ export default function Debate() {
                 body: JSON.stringify({
                     prompt: prompt,
                     opponent: "negative",
+                    topic: topic,
                 }),
             });
 
