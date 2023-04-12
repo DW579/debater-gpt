@@ -44,45 +44,6 @@ app.post("/argument-gpt", (req, res) => {
         }
     }
 
-    // argumentCreation(argument)
-    //     .then((data) => {
-    //         const gpt_response = data.data.choices[0].text.trim();
-
-    //         response_data.argument = gpt_response;
-
-    //         const technique_explanation_prompt = "Argument: " + gpt_response + ". Argument technique explanation: ";
-
-    //         argumentCreation(technique_explanation_prompt)
-    //             .then((data) => {
-    //                 const gpt_response = data.data.choices[0].text.trim();
-
-    //                 response_data.argument_technique_explanation = gpt_response;
-
-    //                 const technique_name_prompt = "Argument: " + gpt_response + ". Argument technique name: ";
-
-    //                 argumentCreation(technique_name_prompt)
-    //                     .then((data) => {
-    //                         const gpt_response = data.data.choices[0].text.trim();
-
-    //                         response_data.argument_technique_name = gpt_response;
-
-    //                         res.json(response_data);
-    //                     })
-    //                     .catch((error) => {
-    //                         console.log(error);
-    //                         res.status(500).json({ error: error.message });
-    //                     });
-    //             })
-    //             .catch((error) => {
-    //                 console.log(error);
-    //                 res.status(500).json({ error: error.message });
-    //             });
-    //     })
-    //     .catch((error) => {
-    //         console.log(error);
-    //         res.status(500).json({ error: error.message });
-    //     });
-
     argumentCreation(argument)
         .then((argumentCompletion) => {
             const argumentResponse = argumentCompletion.data.choices[0].text.trim();
