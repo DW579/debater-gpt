@@ -3,19 +3,11 @@ const bodyParser = require("body-parser");
 const { Configuration, OpenAIApi } = require("openai");
 require("dotenv").config();
 
-const positive_configuration = new Configuration({
-    apiKey: process.env.POSITIVE_OPENAI_API_KEY,
-});
-const negative_configuration = new Configuration({
-    apiKey: process.env.NEGATIVE_OPENAI_API_KEY,
-});
-const user_configuration = new Configuration({
-    apiKey: process.env.USER_OPENAI_API_KEY,
+const configuration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
 });
 
-const positive_openai = new OpenAIApi(positive_configuration);
-const negative_openai = new OpenAIApi(negative_configuration);
-const user_openai = new OpenAIApi(user_configuration);
+const openai = new OpenAIApi(configuration);
 
 const PORT = process.env.PORT || 3001;
 
@@ -24,56 +16,159 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.post("/argument-positive", (req, res) => {
+app.post("/argument-gpt", (req, res) => {
     const prompt = req.body.prompt;
+    const opponent = req.body.opponent;
+    let argument = "Argument: " + prompt + ". " + opponent + " response: ";
+    let response_data = {
+        argument: "",
+        argument_technique_name: "",
+        argument_technique_explanation: "",
+    };
 
-    console.log("Prompt: ", prompt);
+    async function argumentCreation(prompt) {
+        try {
+            const completion = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt: prompt,
+                max_tokens: 256,
+                temperature: 0.7,
+                n: 1,
+                stream: false,
+            });
 
-    setTimeout(() => {
-        res.json({
-            argument:
-                "Positive: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
-            debate_technique: "Utilitarianism",
-            debate_technique_explanation:
-                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
+            return completion;
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    // argumentCreation(argument)
+    //     .then((data) => {
+    //         const gpt_response = data.data.choices[0].text.trim();
+
+    //         response_data.argument = gpt_response;
+
+    //         const technique_explanation_prompt = "Argument: " + gpt_response + ". Argument technique explanation: ";
+
+    //         argumentCreation(technique_explanation_prompt)
+    //             .then((data) => {
+    //                 const gpt_response = data.data.choices[0].text.trim();
+
+    //                 response_data.argument_technique_explanation = gpt_response;
+
+    //                 const technique_name_prompt = "Argument: " + gpt_response + ". Argument technique name: ";
+
+    //                 argumentCreation(technique_name_prompt)
+    //                     .then((data) => {
+    //                         const gpt_response = data.data.choices[0].text.trim();
+
+    //                         response_data.argument_technique_name = gpt_response;
+
+    //                         res.json(response_data);
+    //                     })
+    //                     .catch((error) => {
+    //                         console.log(error);
+    //                         res.status(500).json({ error: error.message });
+    //                     });
+    //             })
+    //             .catch((error) => {
+    //                 console.log(error);
+    //                 res.status(500).json({ error: error.message });
+    //             });
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //         res.status(500).json({ error: error.message });
+    //     });
+
+    argumentCreation(argument)
+        .then((argumentCompletion) => {
+            const argumentResponse = argumentCompletion.data.choices[0].text.trim();
+
+            response_data.argument = argumentResponse;
+
+            const explanationPrompt = "Argument: " + argumentResponse + ". Argument technique explanation: ";
+
+            return argumentCreation(explanationPrompt);
+        })
+        .then((explanationCompletion) => {
+            const explanationResponse = explanationCompletion.data.choices[0].text.trim();
+
+            response_data.argument_technique_explanation = explanationResponse;
+
+            const namePrompt = "Argument: " + explanationResponse + ". Argument technique name: ";
+
+            return argumentCreation(namePrompt);
+        })
+        .then((nameCompletion) => {
+            const nameResponse = nameCompletion.data.choices[0].text.trim();
+
+            response_data.argument_technique_name = nameResponse;
+
+            res.json(response_data);
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json({ error: error.message });
         });
-    }, 5000);
-});
-
-app.post("/argument-negative", (req, res) => {
-    const prompt = req.body.prompt;
-
-    console.log("Prompt: ", prompt);
-
-    setTimeout(() => {
-        res.json({
-            argument:
-                "Negative: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
-            debate_technique: "Utilitarianism",
-            debate_technique_explanation:
-                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
-        });
-    }, 5000);
 });
 
 app.post("/argument-user", (req, res) => {
-    const prompt = req.body.prompt;
+    let argument = req.body.prompt;
 
-    console.log("Prompt: ", prompt);
+    let response_data = {
+        argument: argument,
+        argument_technique_name: "",
+        argument_technique_explanation: "",
+    };
 
-    setTimeout(() => {
-        res.json({
-            argument:
-                "User: Seattle, WA should make public transit free because it would increase ridership and reduce traffic congestion, as well as make transportation more accessible to low-income individuals.",
-            debate_technique: "Utilitarianism",
-            debate_technique_explanation:
-                "Utilitarianism is a philosophical approach that argues that the best action is the one that maximizes overall happiness or well-being. In this case, making public transit free would increase the happiness and well-being of Seattle residents by reducing traffic congestion and making transportation more accessible to low-income individuals, which would lead to a more efficient and equitable society overall.",
+    async function argumentCreation(prompt) {
+        try {
+            const completion = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt: prompt,
+                max_tokens: 256,
+                temperature: 0.7,
+                n: 1,
+                stream: false,
+            });
+
+            return completion;
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    argument = "Argument: " + argument + ". Argument technique explanation: ";
+
+    argumentCreation(argument)
+        .then((data) => {
+            const gpt_response = data.data.choices[0].text.trim();
+
+            response_data.argument_technique_explanation = gpt_response;
+
+            const technique_name_prompt = "Argument: " + gpt_response + ". Argument technique name: ";
+
+            argumentCreation(technique_name_prompt)
+                .then((data) => {
+                    const gpt_response = data.data.choices[0].text.trim();
+
+                    response_data.argument_technique_name = gpt_response;
+
+                    res.json(response_data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                    res.status(500).json({ error: error.message });
+                });
+        })
+        .catch((error) => {
+            console.log(error);
+            res.status(500).json({ error: error.message });
         });
-    }, 5000);
-});
-
-app.get("/api", (req, res) => {
-    res.json({ message: "Hello from server!" });
 });
 
 app.listen(PORT, () => {

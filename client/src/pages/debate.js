@@ -27,10 +27,8 @@ export default function Debate() {
     const [showEndDebate, setShowEndDebate] = React.useState(false);
 
     // State variables for opponent and opponent image
-    const [positiveOpponent, setPositiveOpponent] =
-        React.useState("Select Opponent");
-    const [negativeOpponent, setNegativeOpponent] =
-        React.useState("Select Opponent");
+    const [positiveOpponent, setPositiveOpponent] = React.useState("Select Opponent");
+    const [negativeOpponent, setNegativeOpponent] = React.useState("Select Opponent");
     const [positiveImage, setPositiveImage] = React.useState(QuestionMark);
     const [negativeImage, setNegativeImage] = React.useState(QuestionMark);
 
@@ -39,10 +37,8 @@ export default function Debate() {
 
     const [round, setRound] = React.useState(1);
 
-    const [waitingPositiveArgument, setWaitingPositiveArgument] =
-        React.useState(false);
-    const [waitingNegativeArgument, setWaitingNegativeArgument] =
-        React.useState(false);
+    const [waitingPositiveArgument, setWaitingPositiveArgument] = React.useState(false);
+    const [waitingNegativeArgument, setWaitingNegativeArgument] = React.useState(false);
 
     // State variables for arguments
     const [positiveArguments, setPositiveArguments] = React.useState([]);
@@ -53,21 +49,14 @@ export default function Debate() {
     const [negativeUserArgument, setNegativeUserArgument] = React.useState("");
 
     // State variables for disabling user argument buttons
-    const [
-        positiveUserArgumentDisabled,
-        setPositiveUserArgumentButtonDisabled,
-    ] = React.useState(true);
-    const [
-        negativeUserArgumentButtonDisabled,
-        setNegativeUserArgumentButtonDisabled,
-    ] = React.useState(true);
+    const [positiveUserArgumentDisabled, setPositiveUserArgumentButtonDisabled] = React.useState(true);
+    const [negativeUserArgumentButtonDisabled, setNegativeUserArgumentButtonDisabled] = React.useState(true);
 
     // State variables for topic
     const [topic, setTopic] = React.useState("");
 
     // State variable for disabling opponent button
-    const [disableOpponentButton, setDisableOpponentButton] =
-        React.useState(true);
+    const [disableOpponentButton, setDisableOpponentButton] = React.useState(true);
 
     // State variable for disabling topic button
     const [disableTopicButton, setDisableTopicButton] = React.useState(true);
@@ -78,10 +67,7 @@ export default function Debate() {
 
     // Function to handle opponent selection from dropdown menu
     useEffect(() => {
-        if (
-            positiveOpponent !== "Select Opponent" &&
-            negativeOpponent !== "Select Opponent"
-        ) {
+        if (positiveOpponent !== "Select Opponent" && negativeOpponent !== "Select Opponent") {
             setDisableOpponentButton(false);
         }
 
@@ -89,23 +75,22 @@ export default function Debate() {
     }, [positiveOpponent, negativeOpponent]);
 
     const initializePositive = async () => {
-        const prompt = "You are a debater in a debate competition. You will argue in the positive. I will argue in the negative. The topic is, " + topic + ". You will go first. Return only a json object with keys, argument, debate_technique, and debate_technique_explanation. Each value should be no longer than a paragraph.";
-        
         if (positiveOpponent === "Chat-GPT") {
             setWaitingPositiveArgument(true);
 
             try {
-                const response = await fetch("/argument-positive", {
+                const response = await fetch("/argument-gpt", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        prompt: prompt,
+                        prompt: topic,
+                        opponent: "positive",
                     }),
                 });
 
-                const argument = await response.json();
+                let argument = await response.json();
 
                 setWaitingPositiveArgument(false);
                 setIsPositiveTurn(false);
@@ -194,11 +179,11 @@ export default function Debate() {
         let prompt = "";
 
         if (positiveOpponent === "Chat-GPT") {
-            endpoint = "/argument-positive";
-            prompt = negativeArguments[negativeArguments.length - 1].argument + ". Return only a json object with keys, argument, debate_technique, and debate_technique_explanation. Each value should be no longer than a paragraph.";
+            endpoint = "/argument-gpt";
+            prompt = negativeArguments[negativeArguments.length - 1].argument;
         } else {
             endpoint = "/argument-user";
-            prompt = "Argument: " + positiveUserArgument + ". Return only a json object with keys, debate_technique, and debate_technique_explanation. Each value should be no longer than a paragraph.";
+            prompt = positiveUserArgument;
         }
 
         setWaitingPositiveArgument(true);
@@ -211,10 +196,11 @@ export default function Debate() {
                 },
                 body: JSON.stringify({
                     prompt: prompt,
+                    opponent: "positive",
                 }),
             });
 
-            const argument = await response.json();
+            let argument = await response.json();
 
             setWaitingPositiveArgument(false);
             setIsPositiveTurn(false);
@@ -233,16 +219,12 @@ export default function Debate() {
         let endpoint = "";
         let prompt = "";
 
-        if(round === 1 && negativeOpponent === "Chat-GPT") {
-            prompt = "You are a debater in a debate competition. You will argue in the negative. I will argue in the positive. The topic is, " + topic + ". First opponent argument is, ";
-        }
-
         if (negativeOpponent === "Chat-GPT") {
-            endpoint = "/argument-negative";
-            prompt += positiveArguments[positiveArguments.length - 1].argument + ". Return only a json object with keys, argument, debate_technique, and debate_technique_explanation. Each value should be no longer than a paragraph.";
+            endpoint = "/argument-gpt";
+            prompt = positiveArguments[positiveArguments.length - 1].argument;
         } else {
             endpoint = "/argument-user";
-            prompt = "Argument: " + negativeUserArgument + ". Return only a json object with keys, debate_technique, and debate_technique_explanation. Each value should be no longer than a paragraph.";
+            prompt = negativeUserArgument;
         }
 
         setWaitingNegativeArgument(true);
@@ -255,10 +237,11 @@ export default function Debate() {
                 },
                 body: JSON.stringify({
                     prompt: prompt,
+                    opponent: "negative",
                 }),
             });
 
-            const argument = await response.json();
+            let argument = await response.json();
 
             setWaitingNegativeArgument(false);
             setIsPositiveTurn(true);
@@ -285,49 +268,31 @@ export default function Debate() {
                     <Modal.Body>
                         <Row>
                             <Col className="text-center">
-                                <Opponent
-                                    name="Positive"
-                                    image={positiveImage}
-                                />
+                                <Opponent name="Positive" image={positiveImage} />
                                 <DropdownButton
                                     id="dropdown-basic-button"
                                     title={positiveOpponent}
                                     onSelect={handlePositiveSelect}
                                 >
-                                    <Dropdown.Item eventKey="chat-gpt">
-                                        Chat-GPT
-                                    </Dropdown.Item>
-                                    <Dropdown.Item eventKey="user">
-                                        User
-                                    </Dropdown.Item>
+                                    <Dropdown.Item eventKey="chat-gpt">Chat-GPT</Dropdown.Item>
+                                    <Dropdown.Item eventKey="user">User</Dropdown.Item>
                                 </DropdownButton>
                             </Col>
                             <Col className="text-center">
-                                <Opponent
-                                    name="Negative"
-                                    image={negativeImage}
-                                />
+                                <Opponent name="Negative" image={negativeImage} />
                                 <DropdownButton
                                     id="dropdown-basic-button"
                                     title={negativeOpponent}
                                     onSelect={handleNegativeSelect}
                                 >
-                                    <Dropdown.Item eventKey="chat-gpt">
-                                        Chat-GPT
-                                    </Dropdown.Item>
-                                    <Dropdown.Item eventKey="user">
-                                        User
-                                    </Dropdown.Item>
+                                    <Dropdown.Item eventKey="chat-gpt">Chat-GPT</Dropdown.Item>
+                                    <Dropdown.Item eventKey="user">User</Dropdown.Item>
                                 </DropdownButton>
                             </Col>
                         </Row>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button
-                            variant="primary"
-                            disabled={disableOpponentButton}
-                            onClick={handleOpponentNext}
-                        >
+                        <Button variant="primary" disabled={disableOpponentButton} onClick={handleOpponentNext}>
                             Next
                         </Button>
                     </Modal.Footer>
@@ -337,20 +302,11 @@ export default function Debate() {
                         <Modal.Title>Choose your Topic</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <FormControl
-                            type="text"
-                            placeholder="Enter Topic"
-                            onChange={handleTopicChange}
-                        />
+                        <FormControl type="text" placeholder="Enter Topic" onChange={handleTopicChange} />
                         <h6>Here are a few examples to copy and paste:</h6>
                         <ul>
-                            <li>
-                                Should Seattle, WA make public transportation
-                                free?
-                            </li>
-                            <li>
-                                Should the US have a national healthcare system?
-                            </li>
+                            <li>Should Seattle, WA make public transportation free?</li>
+                            <li>Should the US have a national healthcare system?</li>
                         </ul>
                     </Modal.Body>
                     <Modal.Footer>
@@ -374,49 +330,33 @@ export default function Debate() {
                             <h3>Topic: {topic}</h3>
                             <Row>
                                 <Col className="text-center">
-                                    <Opponent
-                                        name="Positive"
-                                        image={positiveImage}
-                                    />
-                                    {positiveArguments.map(
-                                        (argument, index) => (
-                                            <OverlayTrigger
-                                                trigger="click"
-                                                key={index}
-                                                placement="left"
-                                                overlay={
-                                                    <Popover id={index}>
-                                                        <Popover.Header as="h3">
-                                                            {
-                                                                argument.debate_technique
-                                                            }
-                                                        </Popover.Header>
-                                                        <Popover.Body>
-                                                            {
-                                                                argument.debate_technique_explanation
-                                                            }
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }
-                                            >
-                                                <Button variant="secondary">
-                                                    {argument.argument}
-                                                </Button>
-                                            </OverlayTrigger>
-                                        )
-                                    )}
-                                    {waitingPositiveArgument && (
-                                        <Image src={Typing} alt="Typing" />
-                                    )}
+                                    <Opponent name="Positive" image={positiveImage} />
+                                    {positiveArguments.map((argument, index) => (
+                                        <OverlayTrigger
+                                            trigger="click"
+                                            key={index}
+                                            placement="left"
+                                            overlay={
+                                                <Popover id={index}>
+                                                    <Popover.Header as="h3">
+                                                        {argument.argument_technique_name}
+                                                    </Popover.Header>
+                                                    <Popover.Body>
+                                                        {argument.argument_technique_explanation}
+                                                    </Popover.Body>
+                                                </Popover>
+                                            }
+                                        >
+                                            <Button variant="secondary">{argument.argument}</Button>
+                                        </OverlayTrigger>
+                                    ))}
+                                    {waitingPositiveArgument && <Image src={Typing} alt="Typing" />}
 
                                     {isPositiveTurn &&
                                         !waitingPositiveArgument &&
                                         !showEndDebate &&
                                         positiveOpponent === "Chat-GPT" && (
-                                            <Button
-                                                variant="primary"
-                                                onClick={handlePositiveArgument}
-                                            >
+                                            <Button variant="primary" onClick={handlePositiveArgument}>
                                                 Respond
                                             </Button>
                                         )}
@@ -425,28 +365,20 @@ export default function Debate() {
                                         !waitingPositiveArgument &&
                                         !showEndDebate &&
                                         positiveOpponent === "User" && (
-                                            <Form
-                                                onSubmit={
-                                                    handlePositiveArgument
-                                                }
-                                            >
+                                            <Form onSubmit={handlePositiveArgument}>
                                                 <Form.Group>
                                                     <Form.Control
                                                         as="textarea"
                                                         maxLength={100}
                                                         type="text"
                                                         placeholder="Enter argument"
-                                                        onChange={
-                                                            handlePositiveUserArgumentChange
-                                                        }
+                                                        onChange={handlePositiveUserArgumentChange}
                                                     />
                                                     <Form.Text>{`${positiveUserArgument.length}/100 characters`}</Form.Text>
                                                 </Form.Group>
                                                 <Button
                                                     variant="primary"
-                                                    disabled={
-                                                        positiveUserArgumentDisabled
-                                                    }
+                                                    disabled={positiveUserArgumentDisabled}
                                                     type="submit"
                                                 >
                                                     Submit
@@ -455,84 +387,58 @@ export default function Debate() {
                                         )}
                                 </Col>
                                 <Col className="text-center">
-                                    <Opponent
-                                        name="Negative"
-                                        image={negativeImage}
-                                    />
-                                    {negativeArguments.map(
-                                        (argument, index) => (
-                                            <OverlayTrigger
-                                                trigger="click"
-                                                key={index}
-                                                placement="right"
-                                                overlay={
-                                                    <Popover id={index}>
-                                                        <Popover.Header as="h3">
-                                                            {
-                                                                argument.debate_technique
-                                                            }
-                                                        </Popover.Header>
-                                                        <Popover.Body>
-                                                            {
-                                                                argument.debate_technique_explanation
-                                                            }
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }
-                                            >
-                                                <Button variant="secondary">
-                                                    {argument.argument}
-                                                </Button>
-                                            </OverlayTrigger>
-                                        )
-                                    )}
-                                    {waitingNegativeArgument && (
-                                        <Image src={Typing} alt="Typing" />
-                                    )}
+                                    <Opponent name="Negative" image={negativeImage} />
+                                    {negativeArguments.map((argument, index) => (
+                                        <OverlayTrigger
+                                            trigger="click"
+                                            key={index}
+                                            placement="right"
+                                            overlay={
+                                                <Popover id={index}>
+                                                    <Popover.Header as="h3">
+                                                        {argument.argument_technique_name}
+                                                    </Popover.Header>
+                                                    <Popover.Body>
+                                                        {argument.argument_technique_explanation}
+                                                    </Popover.Body>
+                                                </Popover>
+                                            }
+                                        >
+                                            <Button variant="secondary">{argument.argument}</Button>
+                                        </OverlayTrigger>
+                                    ))}
+                                    {waitingNegativeArgument && <Image src={Typing} alt="Typing" />}
 
                                     {!isPositiveTurn &&
                                         !waitingNegativeArgument &&
                                         !showEndDebate &&
                                         negativeOpponent === "Chat-GPT" && (
-                                            <Button
-                                                variant="primary"
-                                                onClick={handleNegativeArgument}
-                                            >
+                                            <Button variant="primary" onClick={handleNegativeArgument}>
                                                 Respond
                                             </Button>
                                         )}
 
-                                    {!isPositiveTurn &&
-                                        !waitingNegativeArgument &&
-                                        negativeOpponent === "User" && (
-                                            <Form
-                                                onSubmit={
-                                                    handleNegativeArgument
-                                                }
+                                    {!isPositiveTurn && !waitingNegativeArgument && negativeOpponent === "User" && (
+                                        <Form onSubmit={handleNegativeArgument}>
+                                            <Form.Group>
+                                                <Form.Control
+                                                    as="textarea"
+                                                    maxLength={100}
+                                                    type="text"
+                                                    placeholder="Enter argument"
+                                                    onChange={handleNegativeUserArgumentChange}
+                                                />
+                                                <Form.Text>{`${negativeUserArgument.length}/100 characters`}</Form.Text>
+                                            </Form.Group>
+                                            <Button
+                                                variant="primary"
+                                                disabled={negativeUserArgumentButtonDisabled}
+                                                type="submit"
                                             >
-                                                <Form.Group>
-                                                    <Form.Control
-                                                        as="textarea"
-                                                        maxLength={100}
-                                                        type="text"
-                                                        placeholder="Enter argument"
-                                                        onChange={
-                                                            handleNegativeUserArgumentChange
-                                                        }
-                                                    />
-                                                    <Form.Text>{`${negativeUserArgument.length}/100 characters`}</Form.Text>
-                                                </Form.Group>
-                                                <Button
-                                                    variant="primary"
-                                                    disabled={
-                                                        negativeUserArgumentButtonDisabled
-                                                    }
-                                                    type="submit"
-                                                >
-                                                    Submit
-                                                </Button>
-                                            </Form>
-                                        )}
+                                                Submit
+                                            </Button>
+                                        </Form>
+                                    )}
                                 </Col>
                             </Row>
                             {showEndDebate ? (
