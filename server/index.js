@@ -106,25 +106,21 @@ app.post("/argument-user", (req, res) => {
     argument = "Argument: " + argument + ". Argument technique explanation: ";
 
     argumentCreation(argument)
-        .then((data) => {
-            const gpt_response = data.data.choices[0].text.trim();
+        .then((explanationCompletion) => {
+            const explanationResponse = explanationCompletion.data.choices[0].text.trim();
 
-            response_data.argument_technique_explanation = gpt_response;
+            response_data.argument_technique_explanation = explanationResponse;
 
-            const technique_name_prompt = "Argument: " + gpt_response + ". Argument technique name: ";
+            const namePrompt = "Argument: " + explanationResponse + ". Argument technique name: ";
 
-            argumentCreation(technique_name_prompt)
-                .then((data) => {
-                    const gpt_response = data.data.choices[0].text.trim();
+            return argumentCreation(namePrompt);
+        })
+        .then((nameCompletion) => {
+            const nameResponse = nameCompletion.data.choices[0].text.trim();
 
-                    response_data.argument_technique_name = gpt_response;
+            response_data.argument_technique_name = nameResponse;
 
-                    res.json(response_data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                    res.status(500).json({ error: error.message });
-                });
+            res.json(response_data);
         })
         .catch((error) => {
             console.log(error);
