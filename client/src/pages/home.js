@@ -1,5 +1,6 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../App.css";
 
 // Router is needed for Link to work
 // eslint-disable-next-line
@@ -13,14 +14,17 @@ import Button from "react-bootstrap/Button";
 export default function Home() {
     return (
         <Row>
-            <Col>
-                <h1>Debater-GPT</h1>
+            <Col md={{ span: 6, offset: 3 }} className="text-center centered">
+                <h1>Welcome to Debater-GPT</h1>
                 <p>
-                    Debater-GPT is a web application that uses GPT-3 to debate
-                    with you. It is a work in progress.
+                    Debater-GPT is a web application that engages you in a debate using GPT-3 technology. The idea for
+                    this application was inspired by IBM Watson's Project Debater. With this application, you can choose
+                    to watch a debate between OpenAI's Chat-GPT 3, or you can participate in a debate against Chat-GPT 3
+                    or another user. Chat-GPT 3 will analyze each argument and provide feedback on the debate techniques
+                    used. To view the feedback, simply click on the argument.
                 </p>
-                <Button variant="primary" as={Link} to="/debate">
-                    Play Debate-GPT
+                <Button variant="primary" as={Link} to="/debate" className="margin-top-15">
+                    Play Debater-GPT
                 </Button>
             </Col>
         </Row>

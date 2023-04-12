@@ -17,7 +17,7 @@ import Header from "./components/header";
 function App() {
 
     return (
-        <Container fluid className="custom-container">
+        <Container>
             <Router>
                 <Header />
                 <Routes>
