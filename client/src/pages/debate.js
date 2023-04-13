@@ -9,7 +9,6 @@ import Modal from "react-bootstrap/Modal";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Button from "react-bootstrap/esm/Button";
-import Image from "react-bootstrap/Image";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import Card from "react-bootstrap/Card";
@@ -22,7 +21,6 @@ import Opponent from "../components/opponent";
 import QuestionMark from "../images/question_mark.png";
 import OpenaiLogo from "../images/openai_logo.png";
 import UserImage from "../images/user.jpg";
-import Typing from "../images/typing.gif";
 
 export default function Debate() {
     const [showDebate, setShowDebate] = React.useState(false);
@@ -212,6 +210,8 @@ export default function Debate() {
 
             setPositiveArguments([...positiveArguments, argument]);
 
+            setPositiveUserArgument("");
+
             window.scrollTo(0, document.body.scrollHeight);
         } catch (error) {
             console.log(error);
@@ -253,6 +253,8 @@ export default function Debate() {
             setIsPositiveTurn(true);
 
             setNegativeArguments([...negativeArguments, argument]);
+
+            setNegativeUserArgument("");
 
             window.scrollTo(0, document.body.scrollHeight);
         } catch (error) {

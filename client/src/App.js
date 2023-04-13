@@ -8,7 +8,6 @@ import Container from "react-bootstrap/Container";
 
 // Pages
 import Home from "./pages/home";
-import About from "./pages/about";
 import Debate from "./pages/debate";
 
 // Components
@@ -23,7 +22,6 @@ function App() {
                 <Routes>
                     <Route exact path="/" element={<Home />} />
                     <Route path="/debate" element={<Debate />} />
-                    <Route path="/about" element={<About />} />
                 </Routes>
             </Router>
         </Container>

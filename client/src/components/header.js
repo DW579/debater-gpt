@@ -20,9 +20,6 @@ export default function Header() {
                     <Nav.Link as={Link} to="/debate">
                         Debate
                     </Nav.Link>
-                    <Nav.Link as={Link} to="/about">
-                        About
-                    </Nav.Link>
                 </Nav>
             </Container>
         </Navbar>
