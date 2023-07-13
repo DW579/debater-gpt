@@ -26,6 +26,9 @@ export default function Home() {
                 <Button variant="primary" as={Link} to="/debate" className="margin-top-15">
                     Play Debater-GPT
                 </Button>
+                <Button variant="primary" as={Link} to="/opponents" className="margin-top-15">
+                    Pass data to opponents
+                </Button>
             </Col>
         </Row>
     );
