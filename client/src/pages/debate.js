@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Form, FormControl } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import "../App.css";
 
 // Bootstrap components
@@ -23,6 +24,8 @@ import OpenaiLogo from "../images/openai_logo.png";
 import UserImage from "../images/user.jpg";
 
 export default function Debate() {
+    const location = useLocation();
+    console.log("location.state: ", location.state);
     const [showDebate, setShowDebate] = React.useState(false);
     const [showEndDebate, setShowEndDebate] = React.useState(false);
 

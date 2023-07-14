@@ -10,9 +10,9 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
 export default function Opponents() {
-    const [OpponentData, setOpponentData] = React.useState({
-        positiveOpponent: null,
-        negativeOpponent: null
+    const [opponents, setOpponents] = React.useState({
+        positive: null,
+        negative: null
     });
 
     return (
@@ -22,7 +22,7 @@ export default function Opponents() {
                 <p>
                     This is the opponents page.
                 </p>
-                <Button variant="primary" as={Link} to={{pathname: '/topic'}} state={{ opponentData: OpponentData }} className="margin-top-15">
+                <Button variant="primary" as={Link} to={{pathname: '/topic'}} state={{ opponents: opponents }} className="margin-top-15">
                     Pass data to topic
                 </Button>
             </Col>
