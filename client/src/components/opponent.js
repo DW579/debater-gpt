@@ -1,20 +1,45 @@
-import React from "react";
+import React, { useEffect } from "react";
+import "../App.css";
 
 // Bootstrap components
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
+// Images
+import QuestionMark from "../images/question_mark.png";
+import OpenaiLogo from "../images/openai_logo.png";
+import UserImage from "../images/user.jpg";
+
 export default function Opponent(props) {
-    const image_style = {
-        width: "150px",
-        height: "150px",
-    };
+
+    const [opponent, setOpponent] = React.useState({
+        image: QuestionMark
+    });
+
+    useEffect(() => {
+        if(props.opponent === "chat-gpt") {
+            setOpponent(prevState => ({
+                ...prevState,
+                image: OpenaiLogo
+            }));
+        }
+
+        if(props.opponent === "user") {
+            setOpponent(prevState => ({
+                ...prevState,
+                image: UserImage
+            }));
+        }
+
+    }, [props]);
+
+
 
     return (
         <Row>
             <Col>
                 <h3>{props.name}</h3>
-                <img src={props.image} style={image_style} alt="Opponent" />
+                <img src={opponent.image} className="image-style" alt={props.opponent} />
             </Col>
         </Row>
     );
