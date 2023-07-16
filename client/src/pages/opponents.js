@@ -14,14 +14,16 @@ import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 
 export default function Opponents() {
+    // State variable for opponents
     const [opponents, setOpponents] = React.useState({
         positive: null,
         negative: null,
     });
 
-    // State variable for disabling opponent button
+    // State variable for disabling button
     const [disable, setDisable] = React.useState(true);
 
+    // Function to handle opponent selection from dropdown menu
     const handleOpponentSelect = (opponentType, data) => {
         const opponent = data.target.dataset.data;
 
@@ -40,7 +42,7 @@ export default function Opponents() {
         }
     };
 
-    // Function to handle opponent selection from dropdown menu
+    // Effect hook to enable button when both opponents are selected
     useEffect(() => {
         if (opponents.positive !== null && opponents.negative !== null) {
             setDisable(false);
