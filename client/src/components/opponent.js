@@ -11,35 +11,37 @@ import OpenaiLogo from "../images/openai_logo.png";
 import UserImage from "../images/user.jpg";
 
 export default function Opponent(props) {
-
+    // State variable for opponent image
     const [opponent, setOpponent] = React.useState({
-        image: QuestionMark
+        image: QuestionMark,
     });
 
+    // Effect hook to set opponent image
     useEffect(() => {
-        if(props.opponent === "chat-gpt") {
-            setOpponent(prevState => ({
+        if (props.opponent === "chat-gpt") {
+            setOpponent((prevState) => ({
                 ...prevState,
-                image: OpenaiLogo
+                image: OpenaiLogo,
             }));
         }
 
-        if(props.opponent === "user") {
-            setOpponent(prevState => ({
+        if (props.opponent === "user") {
+            setOpponent((prevState) => ({
                 ...prevState,
-                image: UserImage
+                image: UserImage,
             }));
         }
-
     }, [props]);
-
-
 
     return (
         <Row>
             <Col>
                 <h3>{props.name}</h3>
-                <img src={opponent.image} className="image-style" alt={props.opponent} />
+                <img
+                    src={opponent.image}
+                    className="image-style"
+                    alt={props.opponent}
+                />
             </Col>
         </Row>
     );
