@@ -40,3 +40,7 @@ p{
   height: 150px;
 }
 
+.list-style {
+  list-style-type: none;
+}
+
