@@ -4,6 +4,7 @@ import "../App.css";
 // Bootstrap components
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Card from 'react-bootstrap/Card';
 
 // Images
 import QuestionMark from "../images/question_mark.png";
@@ -36,12 +37,10 @@ export default function Opponent(props) {
     return (
         <Row>
             <Col>
-                <h3>{props.name}</h3>
-                <img
-                    src={opponent.image}
-                    className="image-style"
-                    alt={props.opponent}
-                />
+                <Card>
+                    <Card.Header as="h3">{props.name}</Card.Header>
+                    <Card.Img variant="top" src={opponent.image} />
+                </Card>
             </Col>
         </Row>
     );

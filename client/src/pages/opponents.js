@@ -58,11 +58,10 @@ export default function Opponents() {
             >
                 <Row>
                     <Col>
-                        <h1>Opponents</h1>
-                        <p>Select your opponents.</p>
+                        <h1>Select Opponents</h1>
                     </Col>
                 </Row>
-                <Row>
+                <Row className="margin-top-30">
                     <Col className="text-center">
                         <Opponent
                             name="Positive"
