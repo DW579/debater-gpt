@@ -3,12 +3,10 @@ import React, { useEffect } from "react";
 // eslint-disable-next-line
 import { BrowserRouter as Router, Link } from "react-router-dom";
 
-// Components
-import Opponent from "../components/opponent";
-
 // Bootstrap components
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Card from 'react-bootstrap/Card';
 import Button from "react-bootstrap/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
@@ -49,6 +47,8 @@ export default function Opponents() {
         }
     }, [opponents]);
 
+    const REACT_APP_IMAGE_KIT_ENDPOINT = process.env.REACT_APP_IMAGE_KIT_ENDPOINT;
+
     return (
         <Row className="justify-content-center">
             <Col
@@ -63,10 +63,10 @@ export default function Opponents() {
                 </Row>
                 <Row className="margin-top-30">
                     <Col className="text-center">
-                        <Opponent
-                            name="Positive"
-                            opponent={opponents.positive}
-                        />
+                        <Card>
+                            <Card.Header as="h3">Positive</Card.Header>
+                            <Card.Img variant="top" src={opponents.positive ? REACT_APP_IMAGE_KIT_ENDPOINT + opponents.positive : REACT_APP_IMAGE_KIT_ENDPOINT + "question-mark"} />
+                        </Card>
                         <DropdownButton
                             id="dropdown-basic-button"
                             title={opponents.positive ? opponents.positive : "Select Opponent"}
@@ -89,10 +89,10 @@ export default function Opponents() {
                         </DropdownButton>
                     </Col>
                     <Col className="text-center">
-                        <Opponent
-                            name="Negative"
-                            opponent={opponents.negative}
-                        />
+                        <Card>
+                            <Card.Header as="h3">Negative</Card.Header>
+                            <Card.Img variant="top" src={opponents.negative ? REACT_APP_IMAGE_KIT_ENDPOINT + opponents.negative : REACT_APP_IMAGE_KIT_ENDPOINT + "question-mark"} />
+                        </Card>
                         <DropdownButton
                             id="dropdown-basic-button"
                             title={opponents.negative ? opponents.negative : "Select Opponent"}
