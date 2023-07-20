@@ -22,7 +22,6 @@ import UserImage from "../images/user.jpg";
 
 export default function Debate() {
     const location = useLocation();
-    console.log("location.state: ", location.state);
 
     const data = location.state;
 
@@ -291,7 +290,6 @@ export default function Debate() {
                             <Col className="text-center">
                                 <h3 className="margin-top-15">Positive</h3>
                                 <img
-                                    // src={positiveImage}
                                     src={REACT_APP_IMAGE_KIT_ENDPOINT + data.opponents.positive}
                                     alt="Positive"
                                     className="image-style"
@@ -370,7 +368,6 @@ export default function Debate() {
                             <Col className="text-center">
                                 <h3 className="margin-top-15">Negative</h3>
                                 <img
-                                    // src={negativeImage}
                                     src={REACT_APP_IMAGE_KIT_ENDPOINT + data.opponents.negative}
                                     alt="Negative"
                                     className="image-style"
