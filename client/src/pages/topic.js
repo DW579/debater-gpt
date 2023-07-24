@@ -27,11 +27,7 @@ export default function Topic() {
     const handleTopicChange = (event) => {
         setTopic(event.target.value);
 
-        if (event.target.value !== "") {
-            setDisable(false);
-        } else {
-            setDisable(true);
-        }
+        setDisable(event.target.value !== "" ? false : true);
     };
 
     return (
