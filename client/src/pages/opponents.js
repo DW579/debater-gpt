@@ -14,8 +14,8 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 export default function Opponents() {
     // State variable for opponents
     const [opponents, setOpponents] = React.useState({
-        positive: null,
-        negative: null,
+        affirmative: null,
+        opposing: null,
     });
 
     // State variable for disabling button
@@ -25,24 +25,24 @@ export default function Opponents() {
     const handleOpponentSelect = (opponentType, data) => {
         const opponent = data.target.dataset.data;
 
-        if (opponent === "positive") {
+        if (opponent === "affirmative") {
             setOpponents((prevState) => ({
                 ...prevState,
-                positive: opponentType,
+                affirmative: opponentType,
             }));
         }
 
-        if (opponent === "negative") {
+        if (opponent === "opposing") {
             setOpponents((prevState) => ({
                 ...prevState,
-                negative: opponentType,
+                opposing: opponentType,
             }));
         }
     };
 
     // Effect hook to enable button when both opponents are selected
     useEffect(() => {
-        if (opponents.positive !== null && opponents.negative !== null) {
+        if (opponents.affirmative !== null && opponents.opposing !== null) {
             setDisable(false);
         }
     }, [opponents]);
@@ -64,25 +64,25 @@ export default function Opponents() {
                 <Row className="margin-top-30">
                     <Col className="text-center">
                         <Card>
-                            <Card.Header as="h3">Positive</Card.Header>
-                            <Card.Img variant="top" src={opponents.positive ? REACT_APP_IMAGE_KIT_ENDPOINT + opponents.positive : REACT_APP_IMAGE_KIT_ENDPOINT + "question-mark"} />
+                            <Card.Header as="h3">Affirmative</Card.Header>
+                            <Card.Img variant="top" src={opponents.affirmative ? REACT_APP_IMAGE_KIT_ENDPOINT + opponents.affirmative : REACT_APP_IMAGE_KIT_ENDPOINT + "question-mark"} />
                         </Card>
                         <DropdownButton
                             id="dropdown-basic-button"
-                            title={opponents.positive ? opponents.positive : "Select Opponent"}
+                            title={opponents.affirmative ? opponents.affirmative : "Select Opponent"}
                             onSelect={handleOpponentSelect}
                             variant="primary"
                             className="margin-top-15"
                         >
                             <Dropdown.Item
                                 eventKey="chat-gpt"
-                                data-data="positive"
+                                data-data="affirmative"
                             >
                                 Chat-GPT
                             </Dropdown.Item>
                             <Dropdown.Item
                                 eventKey="user"
-                                data-data="positive"
+                                data-data="affirmative"
                             >
                                 User
                             </Dropdown.Item>
@@ -90,25 +90,25 @@ export default function Opponents() {
                     </Col>
                     <Col className="text-center">
                         <Card>
-                            <Card.Header as="h3">Negative</Card.Header>
-                            <Card.Img variant="top" src={opponents.negative ? REACT_APP_IMAGE_KIT_ENDPOINT + opponents.negative : REACT_APP_IMAGE_KIT_ENDPOINT + "question-mark"} />
+                            <Card.Header as="h3">Opposing</Card.Header>
+                            <Card.Img variant="top" src={opponents.opposing ? REACT_APP_IMAGE_KIT_ENDPOINT + opponents.opposing : REACT_APP_IMAGE_KIT_ENDPOINT + "question-mark"} />
                         </Card>
                         <DropdownButton
                             id="dropdown-basic-button"
-                            title={opponents.negative ? opponents.negative : "Select Opponent"}
+                            title={opponents.opposing ? opponents.opposing : "Select Opponent"}
                             onSelect={handleOpponentSelect}
                             variant="primary"
                             className="margin-top-15"
                         >
                             <Dropdown.Item
                                 eventKey="chat-gpt"
-                                data-data="negative"
+                                data-data="opposing"
                             >
                                 Chat-GPT
                             </Dropdown.Item>
                             <Dropdown.Item
                                 eventKey="user"
-                                data-data="negative"
+                                data-data="opposing"
                             >
                                 User
                             </Dropdown.Item>

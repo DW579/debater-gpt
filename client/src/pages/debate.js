@@ -290,7 +290,7 @@ export default function Debate() {
                             <Col className="text-center">
                                 <h3 className="margin-top-15">Positive</h3>
                                 <img
-                                    src={REACT_APP_IMAGE_KIT_ENDPOINT + data.opponents.positive}
+                                    src={REACT_APP_IMAGE_KIT_ENDPOINT + data.opponents.affirmative}
                                     alt="Positive"
                                     className="image-style"
                                 />
@@ -368,7 +368,7 @@ export default function Debate() {
                             <Col className="text-center">
                                 <h3 className="margin-top-15">Negative</h3>
                                 <img
-                                    src={REACT_APP_IMAGE_KIT_ENDPOINT + data.opponents.negative}
+                                    src={REACT_APP_IMAGE_KIT_ENDPOINT + data.opponents.opposing}
                                     alt="Negative"
                                     className="image-style"
                                 />
