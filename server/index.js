@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const { Configuration, OpenAIApi } = require("openai");
@@ -19,6 +19,19 @@ app.use(bodyParser.json());
 
 // Have Node serve the files for our built React app
 app.use(express.static(path.resolve(__dirname, "../client/build")));
+
+app.post("/chat-gpt", (req, res) => {
+    // Pass user input to OpenAI Moderation API
+
+    // Pass user input to OpenAI Completion API for malware detection
+
+    // Pass user input to OpenAI Completion API for chat response
+
+    // Return chat response to critic agent for debate technique analysis
+
+    // Return chat response and technique analysis to user
+    
+});
 
 app.post("/argument-gpt", (req, res) => {
     const prompt = req.body.prompt;
