@@ -21,11 +21,18 @@ import OpenaiLogo from "../images/openai_logo.png";
 import UserImage from "../images/user.jpg";
 
 export default function Debate() {
+    const REACT_APP_IMAGE_KIT_ENDPOINT = process.env.REACT_APP_IMAGE_KIT_ENDPOINT;
+
     const location = useLocation();
+    console.log("location.state: ", location.state);
 
     const data = location.state;
 
     const topic = data.topic;
+
+    const [turn, setTurn] = React.useState("affirmative");
+
+    const [startDebate, setStartDebate] = React.useState(false);
 
     const [showDebate, setShowDebate] = React.useState(true);
     const [showEndDebate, setShowEndDebate] = React.useState(false);
@@ -93,12 +100,15 @@ export default function Debate() {
 
                 let argument = await response.json();
 
-                setWaitingPositiveArgument(false);
-                setIsPositiveTurn(false);
 
-                setPositiveArguments([...positiveArguments, argument]);
+                console.log("argument: ", argument);
 
-                window.scrollTo(0, document.body.scrollHeight);
+                // setWaitingPositiveArgument(false);
+                // setIsPositiveTurn(false);
+
+                // setPositiveArguments([...positiveArguments, argument]);
+
+                // window.scrollTo(0, document.body.scrollHeight);
             } catch (error) {
                 console.log(error);
             }
@@ -269,7 +279,42 @@ export default function Debate() {
         }
     };
 
-    const REACT_APP_IMAGE_KIT_ENDPOINT = process.env.REACT_APP_IMAGE_KIT_ENDPOINT;
+    const handleArgument = async (event) => {
+        event.preventDefault();
+
+        // Hide button
+        setStartDebate(true);
+
+        // Handle argument
+        try {
+            const response = await fetch("/" + data.opponents[turn], {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    topic: data.topic,
+                    responses: []
+                }),
+            });
+
+            let argument = await response.json();
+
+            console.log("argument: ", argument);
+
+            // setWaitingPositiveArgument(false);
+            // setIsPositiveTurn(false);
+
+            // setPositiveArguments([...positiveArguments, argument]);
+
+            // window.scrollTo(0, document.body.scrollHeight);
+        } catch (error) {
+            console.log(error);
+        }
+
+        // setTurn for next opponent
+        setTurn(turn === "affirmative" ? "opposing" : "affirmative");
+    };
 
     return (
         <Row className="justify-content-center margin-bottom-50">
@@ -288,12 +333,36 @@ export default function Debate() {
                         </Card>
                         <Row className="margin-top-40">
                             <Col className="text-center">
-                                <h3 className="margin-top-15">Positive</h3>
+                                <h3 className="margin-top-15">Affirmative</h3>
                                 <img
                                     src={REACT_APP_IMAGE_KIT_ENDPOINT + data.opponents.affirmative}
-                                    alt="Positive"
+                                    alt={data.opponents.affirmative}
                                     className="image-style"
                                 />
+                            </Col>
+                            <Col className="text-center">
+                                <h3 className="margin-top-15">Opposing</h3>
+                                <img
+                                    src={REACT_APP_IMAGE_KIT_ENDPOINT + data.opponents.opposing}
+                                    alt={data.opponents.opposing}
+                                    className="image-style"
+                                />
+                            </Col>
+                        </Row>
+                        {!startDebate ? (
+                            <Row className="margin-top-40">
+                                <Col>
+                                    <Button
+                                        variant="success"
+                                        onClick={handleArgument}
+                                    >
+                                        Start Debate
+                                    </Button>
+                                </Col>
+                            </Row>
+                        ) : null}
+                        <Row className="margin-top-40">
+                            <Col className="text-center">
                                 {positiveArguments.map((argument, index) => (
                                     <Row>
                                         <Col className="text-center">
@@ -366,12 +435,6 @@ export default function Debate() {
                                 )}
                             </Col>
                             <Col className="text-center">
-                                <h3 className="margin-top-15">Negative</h3>
-                                <img
-                                    src={REACT_APP_IMAGE_KIT_ENDPOINT + data.opponents.opposing}
-                                    alt="Negative"
-                                    className="image-style"
-                                />
                                 {negativeArguments.map((argument, index) => (
                                     <Row>
                                         <Col className="text-center">

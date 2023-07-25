@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.resolve(__dirname, "../client/build")));
 
 app.post("/chat-gpt", (req, res) => {
+    console.log("chat-gpt req.body: ", req.body);
     // Pass user input to OpenAI Moderation API
 
     // Pass user input to OpenAI Completion API for malware detection
@@ -30,7 +31,11 @@ app.post("/chat-gpt", (req, res) => {
     // Return chat response to critic agent for debate technique analysis
 
     // Return chat response and technique analysis to user
-    
+
+});
+
+app.post("/user", (req, res) => {
+    console.log("user req.body: ", req.body);
 });
 
 app.post("/argument-gpt", (req, res) => {
