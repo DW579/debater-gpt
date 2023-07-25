@@ -305,7 +305,7 @@ export default function Debate() {
 
             let rebuttal = await response.json();
 
-            console.log("rebuttal: ", rebuttal);
+            console.log("debate.js rebuttal: ", rebuttal);
 
             // setWaitingPositiveArgument(false);
             // setIsPositiveTurn(false);
