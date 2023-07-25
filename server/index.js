@@ -74,7 +74,6 @@ app.post("/chat-gpt", (req, res) => {
     // Pass user input to OpenAI Completion API for chat response
     const createRebuttal = async (rebuttals) => {
         const lastRebuttal = rebuttals[rebuttals.length - 1];
-        const user = lastRebuttal.opponent === "affirmative" ? "affirmative" : "opposing";
         const assistant = lastRebuttal.opponent === "affirmative" ? "opposing" : "affirmative";
         const systemMessage = "You are a debater in a debate competition. You are debating \
         for the " + assistant + " team. The topic of the debate is, " + topic + ". Review all responses that have been given so \
@@ -93,7 +92,6 @@ app.post("/chat-gpt", (req, res) => {
         ***************** \
         [END ATTRIBUTES] \
         Do not state the attributes in your response. Your response should be no longer than 128 tokens. When citing evidence, cite the source of the evidence.";
-        // const messages = [{"role": "system", "content": systemMessage}, {role: "user", content: "The government should not provide universal basic income for all citizens but just for the ones who need it."}];
         let messages = [{"role": "system", "content": systemMessage}];
 
         for(const rebuttal of rebuttals) {
@@ -119,6 +117,35 @@ app.post("/chat-gpt", (req, res) => {
     };
 
     // Return chat response to critic agent for debate technique analysis
+    const techniqueAnalysis = async (rebuttal) => {
+        const delimiter = "####";
+        const systemMessage = 'You are a critic agent. Your task is to determine the debate technique \
+        of the provided rebuttal.\
+        When given a rebuttal as input (delimited by " + delimiter + "), \
+        respond with a json object. The structure of the json object to return is as follows:\
+        ***************** \
+        {"technique": "technique name", "explanation": "explanation of technique"} \
+        ***************** \
+        Output only the json object. The explanation of the technique should be short, no longer than 64 tokens.';
+
+        try {
+            const techniqueResponse = await openai.createChatCompletion({
+                model: "gpt-4",
+                messages: [
+                    {"role": "system", "content": systemMessage},
+                    {"role": "user", "content": delimiter + rebuttal.content + delimiter}
+                ],
+                max_tokens: 64,
+                temperature: 0.7,
+            });
+
+            return techniqueResponse;
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json({ error: error.message });
+        }
+    };
 
     // Return chat response and technique analysis to user
 
@@ -128,16 +155,26 @@ app.post("/chat-gpt", (req, res) => {
         try {
             const moderatorResponse = rebuttals.length > 0 ? await checkModeration(lastRebuttal) : false;
             let malwareResponse = moderatorResponse === false ? await checkMalware(lastRebuttal) : false;
+
             malwareResponse = malwareResponse.data.choices[0].message.content.toLowerCase() === "true" ? true : false;
 
-            const rebuttalResponse = !malwareResponse ? await createRebuttal(rebuttals) : false;
+            let rebuttalResponse = !malwareResponse ? await createRebuttal(rebuttals) : false;
+
+            rebuttalResponse = rebuttalResponse.data.choices[0].message;
+
+            let rebuttalTechnique = await techniqueAnalysis(rebuttalResponse);
+
+            rebuttalTechnique = JSON.parse(rebuttalTechnique.data.choices[0].message.content);
 
             // await createRebuttal(rebuttals)
 
             console.log("moderatorResponse: ", moderatorResponse);
             console.log("malwareResponse: ", malwareResponse);
+            console.log("rebuttalResponse: ", rebuttalResponse);
+            console.log("rebuttalTechnique: ", rebuttalTechnique);
             // console.log("malwareResponse.data.choices[0].message.content: ", malwareResponse.data.choices[0].message.content);
-            console.log("rebuttalResponse.data: ", rebuttalResponse.data.choices[0].message);
+            // console.log("rebuttalResponse.data: ", rebuttalResponse.data.choices[0].message);
+            // console.log("rebuttalTechnique.data: ", rebuttalTechnique.data.choices[0].message);
         }
         catch (error) {
             console.log(error);
