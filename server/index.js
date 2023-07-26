@@ -24,7 +24,10 @@ app.post("/chat-gpt", (req, res) => {
     const topic = req.body.topic;
     let rebuttals = req.body.rebuttals;
     const lastRebuttal = rebuttals[rebuttals.length - 1];
-    const assistant = lastRebuttal.opponent === "affirmative" ? "opposing" : "affirmative";
+    const assistant = rebuttals.length === 0 ? "affirmative" : lastRebuttal.opponent === "affirmative" ? "opposing" : "affirmative";
+    const user = assistant === "affirmative" ? "opposing" : "affirmative";
+
+    console.log("index.js rebuttals: ", rebuttals);
 
     // Pass user input to OpenAI Moderation API
     const checkModeration = async (rebuttal) => {
@@ -60,7 +63,7 @@ app.post("/chat-gpt", (req, res) => {
 
         try {
             const malwareResponse = await openai.createChatCompletion({
-                model: "gpt-4",
+                model: "gpt-3.5-turbo",
                 messages: [
                     { role: "system", content: systemMessage },
                     { role: "user", content: delimiter + rebuttal.content + delimiter },
@@ -80,28 +83,17 @@ app.post("/chat-gpt", (req, res) => {
     const createRebuttal = async (rebuttals) => {
         const systemMessage =
             "You are a debater in a debate competition. You are debating \
-        for the " +
+            for the " +
             assistant +
             " team. The topic of the debate is, " +
             topic +
-            ". Review all responses that have been given so \
-        far in the debate. Then provide your response. Your response needs the attributes as follows: \
-        [BEGIN ATTRIBUTES] \
-        ***************** \
-        [Organized and clear]: Main arguments and responses are outlined in a clear and orderly way. \
-        ***************** \
-        [Use of Argument]: Reasons are given to support the resolution. \
-        ***************** \
-        [Use of cross-examination and rebuttal]: Identification of weakness in " +
+            ". Review all messages between the user and assistant. \
+            Then provide your new argument, do not complete the last argument. If there are no previous arguments and only the system prompt, then you will be providing the first argument to start the competition. \
+            Do not address the other team if providing the first argument. \
+            Your rebuttal or argument should be arguing for the " +
             assistant +
-            " team's \
-        arguments and ability to defend itself against attack. \
-        ***************** \
-        [Presentative style]: Tone of voice, clarity of expression, precision of arguments all contribute \
-        to keeping audience's attention and persuading them of your team's case. \
-        ***************** \
-        [END ATTRIBUTES] \
-        Do not state the attributes in your response. Your response should be no longer than 128 tokens. When citing evidence, cite the source of the evidence.";
+            " team. Not completing the previous argument. \
+            Your argument should be short and in complete sentences. When citing evidence, cite the source of the evidence. Do not state any formal introduction.";
         let messages = [{ role: "system", content: systemMessage }];
 
         for (const rebuttal of rebuttals) {
@@ -113,9 +105,9 @@ app.post("/chat-gpt", (req, res) => {
 
         try {
             const newRebuttal = await openai.createChatCompletion({
-                model: "gpt-4",
+                model: "gpt-3.5-turbo",
                 messages: messages,
-                max_tokens: 128,
+                max_tokens: 1000,
                 temperature: 0.7,
             });
 
@@ -141,7 +133,7 @@ app.post("/chat-gpt", (req, res) => {
 
         try {
             const techniqueResponse = await openai.createChatCompletion({
-                model: "gpt-4",
+                model: "gpt-3.5-turbo",
                 messages: [
                     { role: "system", content: systemMessage },
                     { role: "user", content: delimiter + rebuttal.content + delimiter },
@@ -161,10 +153,10 @@ app.post("/chat-gpt", (req, res) => {
 
     const main = async () => {
         try {
-            const moderatorResponse = rebuttals.length > 0 ? await checkModeration(lastRebuttal) : false;
-            let malwareResponse = moderatorResponse === false ? await checkMalware(lastRebuttal) : false;
+            const moderatorResponse = rebuttals.length > 0 ? await checkModeration(lastRebuttal) : true;
+            let malwareResponse = moderatorResponse === false ? await checkMalware(lastRebuttal) : true;
 
-            malwareResponse = malwareResponse.data.choices[0].message.content.toLowerCase() === "true" ? true : false;
+            malwareResponse = malwareResponse.data !== undefined ? (malwareResponse.data.choices[0].message.content.toLowerCase() === "true" ? true : false) : false;
 
             let rebuttalResponse = !malwareResponse ? await createRebuttal(rebuttals) : false;
 
@@ -177,13 +169,10 @@ app.post("/chat-gpt", (req, res) => {
             // {"opponent": "", "content": "", "technique": "", "explanation": ""}
             res.json({ opponent: assistant, content: rebuttalResponse.content, technique: rebuttalTechnique.technique, explanation: rebuttalTechnique.explanation });
 
-            console.log("moderatorResponse: ", moderatorResponse);
-            console.log("malwareResponse: ", malwareResponse);
+            // console.log("moderatorResponse: ", moderatorResponse);
+            // console.log("malwareResponse: ", malwareResponse);
             console.log("rebuttalResponse: ", rebuttalResponse);
-            console.log("rebuttalTechnique: ", rebuttalTechnique);
-            // console.log("malwareResponse.data.choices[0].message.content: ", malwareResponse.data.choices[0].message.content);
-            // console.log("rebuttalResponse.data: ", rebuttalResponse.data.choices[0].message);
-            // console.log("rebuttalTechnique.data: ", rebuttalTechnique.data.choices[0].message);
+            // console.log("rebuttalTechnique: ", rebuttalTechnique);
         } catch (error) {
             console.log(error);
             res.status(500).json({ error: error.message });
