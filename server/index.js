@@ -27,8 +27,6 @@ app.post("/chat-gpt", (req, res) => {
     const assistant = rebuttals.length === 0 ? "affirmative" : lastRebuttal.opponent === "affirmative" ? "opposing" : "affirmative";
     const user = assistant === "affirmative" ? "opposing" : "affirmative";
 
-    console.log("index.js rebuttals: ", rebuttals);
-
     // Pass user input to OpenAI Moderation API
     const checkModeration = async (rebuttal) => {
         try {
@@ -108,7 +106,7 @@ app.post("/chat-gpt", (req, res) => {
                 model: "gpt-3.5-turbo",
                 messages: messages,
                 max_tokens: 1000,
-                temperature: 0.7,
+                temperature: 1,
             });
 
             return newRebuttal;
@@ -150,7 +148,6 @@ app.post("/chat-gpt", (req, res) => {
     };
 
     // Return chat response and technique analysis to user
-
     const main = async () => {
         try {
             const moderatorResponse = rebuttals.length > 0 ? await checkModeration(lastRebuttal) : true;
