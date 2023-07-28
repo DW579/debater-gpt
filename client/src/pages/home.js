@@ -23,11 +23,8 @@ export default function Home() {
                     or another user. Chat-GPT 3 will analyze each argument and provide feedback on the debate techniques
                     used. To view the feedback, simply click on the argument.
                 </p>
-                <Button variant="primary" as={Link} to="/debate" className="margin-top-15">
-                    Play Debater-GPT
-                </Button>
                 <Button variant="primary" as={Link} to="/opponents" className="margin-top-15">
-                    Pass data to opponents
+                    Play Debater-GPT
                 </Button>
             </Col>
         </Row>

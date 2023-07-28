@@ -36,48 +36,29 @@ export default function Debate() {
 
     const [round, setRound] = React.useState(1);
 
-    // State variables for user argument
-    const [positiveUserArgument, setPositiveUserArgument] = React.useState("");
-    const [negativeUserArgument, setNegativeUserArgument] = React.useState("");
+    const [userRebuttal, setUserRebuttal] = React.useState("");
 
-    // State variables for disabling user argument buttons
-    const [positiveUserArgumentDisabled, setPositiveUserArgumentButtonDisabled] = React.useState(true);
-    const [negativeUserArgumentButtonDisabled, setNegativeUserArgumentButtonDisabled] = React.useState(true);
+    const [userButton, setUserButton] = React.useState(false);
 
     // Function to handle opponent selection from dropdown menu
     useEffect(() => {
-        console.log("rebuttals: ", rebuttals);
         if (round > 3) {
             setShowEndDebate(true);
         }
         window.scrollTo(0, document.body.scrollHeight);
     }, [rebuttals, round]);
 
-    const handlePositiveUserArgumentChange = (event) => {
+    const handleUserRebuttalChange = (event) => {
         const newValue = event.target.value;
 
         if (newValue.length <= 100) {
-            setPositiveUserArgument(event.target.value);
+            setUserRebuttal(event.target.value);
         }
 
         if (newValue.length > 0) {
-            setPositiveUserArgumentButtonDisabled(false);
+            setUserButton(false);
         } else {
-            setPositiveUserArgumentButtonDisabled(true);
-        }
-    };
-
-    const handleNegativeUserArgumentChange = (event) => {
-        const newValue = event.target.value;
-
-        if (newValue.length <= 100) {
-            setNegativeUserArgument(event.target.value);
-        }
-
-        if (newValue.length > 0) {
-            setNegativeUserArgumentButtonDisabled(false);
-        } else {
-            setNegativeUserArgumentButtonDisabled(true);
+            setUserButton(true);
         }
     };
 
@@ -87,8 +68,9 @@ export default function Debate() {
         setWaiting(true);
 
         // Handle rebuttal
+        // data.opponents[turn]
         try {
-            const response = await fetch("/" + data.opponents[turn], {
+            const response = await fetch("/chat-gpt", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -96,6 +78,9 @@ export default function Debate() {
                 body: JSON.stringify({
                     topic: topic,
                     rebuttals: rebuttals,
+                    turn: turn,
+                    opponent: data.opponents[turn],
+                    userRebuttal: userRebuttal
                 }),
             });
 
@@ -246,13 +231,13 @@ export default function Debate() {
                                                     maxLength={300}
                                                     type="text"
                                                     placeholder="Enter argument"
-                                                    onChange={handlePositiveUserArgumentChange}
+                                                    onChange={handleUserRebuttalChange}
                                                 />
-                                                <Form.Text>{`${positiveUserArgument.length}/300 characters`}</Form.Text>
+                                                <Form.Text>{`${userRebuttal.length}/300 characters`}</Form.Text>
                                             </Form.Group>
                                             <Button
                                                 variant="primary"
-                                                disabled={positiveUserArgumentDisabled}
+                                                disabled={userButton}
                                                 type="submit"
                                                 className="margin-top-15"
                                             >
@@ -330,13 +315,13 @@ export default function Debate() {
                                                     maxLength={300}
                                                     type="text"
                                                     placeholder="Enter argument"
-                                                    onChange={handleNegativeUserArgumentChange}
+                                                    onChange={handleUserRebuttalChange}
                                                 />
-                                                <Form.Text>{`${positiveUserArgument.length}/300 characters`}</Form.Text>
+                                                <Form.Text>{`${userRebuttal.length}/300 characters`}</Form.Text>
                                             </Form.Group>
                                             <Button
                                                 variant="primary"
-                                                disabled={negativeUserArgumentButtonDisabled}
+                                                disabled={userButton}
                                                 type="submit"
                                                 className="margin-top-15"
                                             >

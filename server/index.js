@@ -22,10 +22,17 @@ app.use(express.static(path.resolve(__dirname, "../client/build")));
 
 app.post("/chat-gpt", (req, res) => {
     const topic = req.body.topic;
+    const turn = req.body.turn;
+    const opponent = req.body.opponent;
+    const userRebuttal = req.body.userRebuttal;
     let rebuttals = req.body.rebuttals;
-    const lastRebuttal = rebuttals[rebuttals.length - 1];
+    // const lastRebuttal = rebuttals[rebuttals.length - 1];
+    const lastRebuttal = rebuttals.length === 0 ? {"role": "assistant", "content": ""} : rebuttals[rebuttals.length - 1];
     const assistant = rebuttals.length === 0 ? "affirmative" : lastRebuttal.opponent === "affirmative" ? "opposing" : "affirmative";
     const user = assistant === "affirmative" ? "opposing" : "affirmative";
+
+    console.log("turn: ", turn);
+    console.log("assistant: ", assistant);
 
     // Pass user input to OpenAI Moderation API
     const checkModeration = async (rebuttal) => {
@@ -150,14 +157,27 @@ app.post("/chat-gpt", (req, res) => {
     // Return chat response and technique analysis to user
     const main = async () => {
         try {
-            const moderatorResponse = rebuttals.length > 0 ? await checkModeration(lastRebuttal) : true;
+            const moderatorResponse = await checkModeration(lastRebuttal);
+
             let malwareResponse = moderatorResponse === false ? await checkMalware(lastRebuttal) : true;
+            malwareResponse = malwareResponse.data.choices[0].message.content.toLowerCase();
+            malwareResponse = malwareResponse === "false" ? false : true;
 
-            malwareResponse = malwareResponse.data !== undefined ? (malwareResponse.data.choices[0].message.content.toLowerCase() === "true" ? true : false) : false;
+            let rebuttalResponse = null;
 
-            let rebuttalResponse = !malwareResponse ? await createRebuttal(rebuttals) : false;
+            if(!malwareResponse && opponent === "chat-gpt") {
+                rebuttalResponse = await createRebuttal(rebuttals);
 
-            rebuttalResponse = rebuttalResponse.data.choices[0].message;
+                rebuttalResponse = rebuttalResponse.data.choices[0].message;
+            }
+
+            if(!malwareResponse && opponent === "user") {
+                rebuttalResponse = {"role": "assistent", "content": userRebuttal};
+            }
+
+            if(malwareResponse) {
+                res.status(500).json({ error: "Malware detected!" });
+            }
 
             let rebuttalTechnique = await techniqueAnalysis(rebuttalResponse);
 
@@ -166,10 +186,6 @@ app.post("/chat-gpt", (req, res) => {
             // {"opponent": "", "content": "", "technique": "", "explanation": ""}
             res.json({ opponent: assistant, content: rebuttalResponse.content, technique: rebuttalTechnique.technique, explanation: rebuttalTechnique.explanation });
 
-            // console.log("moderatorResponse: ", moderatorResponse);
-            // console.log("malwareResponse: ", malwareResponse);
-            console.log("rebuttalResponse: ", rebuttalResponse);
-            // console.log("rebuttalTechnique: ", rebuttalTechnique);
         } catch (error) {
             console.log(error);
             res.status(500).json({ error: error.message });
