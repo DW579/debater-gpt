@@ -38,13 +38,14 @@ export default function Debate() {
 
     const [userRebuttal, setUserRebuttal] = React.useState("");
 
-    const [userButton, setUserButton] = React.useState(false);
+    const [userButton, setUserButton] = React.useState(true);
 
     // Function to handle opponent selection from dropdown menu
     useEffect(() => {
         if (round > 3) {
             setShowEndDebate(true);
         }
+
         window.scrollTo(0, document.body.scrollHeight);
     }, [rebuttals, round]);
 
