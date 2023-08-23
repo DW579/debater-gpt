@@ -13,7 +13,7 @@ import Card from "react-bootstrap/Card";
 import Spinner from "react-bootstrap/Spinner";
 
 export default function Debate() {
-    const REACT_APP_IMAGE_KIT_ENDPOINT = process.env.REACT_APP_IMAGE_KIT_ENDPOINT;
+    const REACT_APP_IMAGE_KIT_ENDPOINT = "https://ik.imagekit.io/c2lziyvdx/NoDelete/";
 
     const location = useLocation();
 

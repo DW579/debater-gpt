@@ -47,7 +47,7 @@ export default function Opponents() {
         }
     }, [opponents]);
 
-    const REACT_APP_IMAGE_KIT_ENDPOINT = process.env.REACT_APP_IMAGE_KIT_ENDPOINT;
+    const REACT_APP_IMAGE_KIT_ENDPOINT = "https://ik.imagekit.io/c2lziyvdx/NoDelete/";
 
     return (
         <Row className="justify-content-center">
