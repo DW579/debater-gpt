@@ -71,7 +71,7 @@ export default function Debate() {
         // Handle rebuttal
         // data.opponents[turn]
         try {
-            const response = await fetch("/chat-gpt", {
+            const response = await fetch("/rebuttal", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -79,9 +79,8 @@ export default function Debate() {
                 body: JSON.stringify({
                     topic: topic,
                     rebuttals: rebuttals,
-                    turn: turn,
                     opponent: data.opponents[turn],
-                    userRebuttal: userRebuttal
+                    userRebuttal: userRebuttal,
                 }),
             });
 
@@ -111,10 +110,9 @@ export default function Debate() {
 
         setStartDebate(true);
 
-        if(affirmativeOpponent === "chat-gpt") {
+        if (affirmativeOpponent === "chat-gpt") {
             handleRebuttal(event);
         }
-
     };
 
     return (
@@ -126,6 +124,12 @@ export default function Debate() {
             >
                 <Row>
                     <Col className="text-center">
+                        <Card className="text-center margin-top-30">
+                            <Card.Body>
+                                <Card.Title>Instructions</Card.Title>
+                                <Card.Text>To view the debate technique analysis of the argument, simple click the agrugment.</Card.Text>
+                            </Card.Body>
+                        </Card>
                         <Card className="text-center margin-top-30">
                             <Card.Header>Topic</Card.Header>
                             <Card.Body>

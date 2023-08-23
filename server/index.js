@@ -20,19 +20,13 @@ app.use(bodyParser.json());
 // Have Node serve the files for our built React app
 app.use(express.static(path.resolve(__dirname, "../client/build")));
 
-app.post("/chat-gpt", (req, res) => {
+app.post("/rebuttal", (req, res) => {
     const topic = req.body.topic;
-    const turn = req.body.turn;
     const opponent = req.body.opponent;
     const userRebuttal = req.body.userRebuttal;
     let rebuttals = req.body.rebuttals;
-    // const lastRebuttal = rebuttals[rebuttals.length - 1];
-    const lastRebuttal = rebuttals.length === 0 ? {"role": "assistant", "content": ""} : rebuttals[rebuttals.length - 1];
+    const lastRebuttal = rebuttals.length === 0 ? { role: "assistant", content: "" } : rebuttals[rebuttals.length - 1];
     const assistant = rebuttals.length === 0 ? "affirmative" : lastRebuttal.opponent === "affirmative" ? "opposing" : "affirmative";
-    const user = assistant === "affirmative" ? "opposing" : "affirmative";
-
-    console.log("turn: ", turn);
-    console.log("assistant: ", assistant);
 
     // Pass user input to OpenAI Moderation API
     const checkModeration = async (rebuttal) => {
@@ -165,17 +159,17 @@ app.post("/chat-gpt", (req, res) => {
 
             let rebuttalResponse = null;
 
-            if(!malwareResponse && opponent === "chat-gpt") {
+            if (!malwareResponse && opponent === "chat-gpt") {
                 rebuttalResponse = await createRebuttal(rebuttals);
 
                 rebuttalResponse = rebuttalResponse.data.choices[0].message;
             }
 
-            if(!malwareResponse && opponent === "user") {
-                rebuttalResponse = {"role": "assistent", "content": userRebuttal};
+            if (!malwareResponse && opponent === "user") {
+                rebuttalResponse = { role: "assistent", content: userRebuttal };
             }
 
-            if(malwareResponse) {
+            if (malwareResponse) {
                 res.status(500).json({ error: "Malware detected!" });
             }
 
@@ -185,7 +179,6 @@ app.post("/chat-gpt", (req, res) => {
 
             // {"opponent": "", "content": "", "technique": "", "explanation": ""}
             res.json({ opponent: assistant, content: rebuttalResponse.content, technique: rebuttalTechnique.technique, explanation: rebuttalTechnique.explanation });
-
         } catch (error) {
             console.log(error);
             res.status(500).json({ error: error.message });
@@ -193,126 +186,6 @@ app.post("/chat-gpt", (req, res) => {
     };
 
     main();
-});
-
-app.post("/user", (req, res) => {
-    console.log("user req.body: ", req.body);
-});
-
-app.post("/argument-gpt", (req, res) => {
-    const prompt = req.body.prompt;
-    const opponent = req.body.opponent;
-    const topic = req.body.topic;
-    let argument = "Topic:" + topic + ". Argument: " + prompt + ". Response in the " + opponent + " of the topic: ";
-    let response_data = {
-        argument: "",
-        argument_technique_name: "",
-        argument_technique_explanation: "",
-    };
-
-    async function argumentCreation(prompt) {
-        try {
-            const completion = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt: prompt,
-                max_tokens: 256,
-                temperature: 1,
-                n: 1,
-                stream: false,
-                top_p: 1,
-                frequency_penalty: 2,
-                presence_penalty: 2,
-            });
-
-            return completion;
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: error.message });
-        }
-    }
-
-    argumentCreation(argument)
-        .then((argumentCompletion) => {
-            const argumentResponse = argumentCompletion.data.choices[0].text.trim();
-
-            response_data.argument = argumentResponse;
-
-            const explanationPrompt = "Argument: " + argumentResponse + ". Argument technique explanation: ";
-
-            return argumentCreation(explanationPrompt);
-        })
-        .then((explanationCompletion) => {
-            const explanationResponse = explanationCompletion.data.choices[0].text.trim();
-
-            response_data.argument_technique_explanation = explanationResponse;
-
-            const namePrompt = "Argument: " + explanationResponse + ". Argument technique name: ";
-
-            return argumentCreation(namePrompt);
-        })
-        .then((nameCompletion) => {
-            const nameResponse = nameCompletion.data.choices[0].text.trim();
-
-            response_data.argument_technique_name = nameResponse;
-
-            res.json(response_data);
-        })
-        .catch((error) => {
-            console.log(error);
-            res.status(500).json({ error: error.message });
-        });
-});
-
-app.post("/argument-user", (req, res) => {
-    let argument = req.body.prompt;
-
-    let response_data = {
-        argument: argument,
-        argument_technique_name: "",
-        argument_technique_explanation: "",
-    };
-
-    async function argumentCreation(prompt) {
-        try {
-            const completion = await openai.createCompletion({
-                model: "text-davinci-003",
-                prompt: prompt,
-                max_tokens: 256,
-                temperature: 0.7,
-                n: 1,
-                stream: false,
-            });
-
-            return completion;
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: error.message });
-        }
-    }
-
-    argument = "Argument: " + argument + ". Argument technique explanation: ";
-
-    argumentCreation(argument)
-        .then((explanationCompletion) => {
-            const explanationResponse = explanationCompletion.data.choices[0].text.trim();
-
-            response_data.argument_technique_explanation = explanationResponse;
-
-            const namePrompt = "Argument: " + explanationResponse + ". Argument technique name: ";
-
-            return argumentCreation(namePrompt);
-        })
-        .then((nameCompletion) => {
-            const nameResponse = nameCompletion.data.choices[0].text.trim();
-
-            response_data.argument_technique_name = nameResponse;
-
-            res.json(response_data);
-        })
-        .catch((error) => {
-            console.log(error);
-            res.status(500).json({ error: error.message });
-        });
 });
 
 app.listen(PORT, () => {
